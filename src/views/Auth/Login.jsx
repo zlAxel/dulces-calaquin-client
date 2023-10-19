@@ -1,10 +1,21 @@
+
 import { Link } from "react-router-dom"
 import { axiosInstance } from "../../config/axios";
 
 import loginForm, { emailRef, passwordRef } from "../../forms/login"
+import { Button } from "../../components/utility/Button";
+import { useState } from "react";
+import { useAuth } from "../../hooks/useAuth";
 
 export const Login = () => {
+    
+    // ? Creamos los states
+    const [isLoading, setIsLoading] = useState(false);
 
+    // ? Obtenemos el hook para iniciar sesión
+    const { login } = useAuth();
+
+    // ? Función para enviar el formulario
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -15,17 +26,12 @@ export const Login = () => {
             remember: false
         };
 
-        try {
-            await axiosInstance("/sanctum/csrf-cookie");
-            await axiosInstance.post("/login", datos);
+        setIsLoading(true); // * Activamos el loader
 
-            const { data } = await axiosInstance("/api/user");
+        // ? Iniciamos sesión
+        await login( datos );
 
-            console.log(data);
-            
-        } catch (error) {
-            console.log( Object.values(error.response.data.errors) );
-        }
+        setIsLoading(false); // * Desactivamos el loader
     }
 
     return (
@@ -85,12 +91,12 @@ export const Login = () => {
                             </div>
 
                             <div>
-                                <button
+                                <Button 
+                                    content="Iniciar sesión"
                                     type="submit"
-                                    className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                                    >
-                                    Sign in
-                                </button>
+                                    appearance="primary"
+                                    isLoading={ isLoading }
+                                />
                             </div>
                         </form>
 
