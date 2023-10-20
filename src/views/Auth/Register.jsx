@@ -1,9 +1,29 @@
+import { useState } from "react";
 import { Link } from "react-router-dom"
-import { axiosInstance } from "../../config/axios";
+import { Alert } from "../../components/Alert";
+import { Button } from "../../components/utility/Button";
 
-import loginForm, { nameRef, emailRef, passwordRef, passwordConfirmationRef } from "../../forms/register"
+import registerForm, { nameRef, emailRef, passwordRef, passwordConfirmationRef, pinRef } from "../../forms/register"
+
+import { useApp } from "../../hooks/useApp";
+import { useAuth } from "../../hooks/useAuth";
 
 export const Register = () => {
+
+    // ? Obtenemos las alertas del context
+    const { alerts } = useApp();
+    
+    // ? Creamos los states
+    const [isLoading, setIsLoading] = useState(false);
+
+    const buttonValues = {
+        initial: "Registrar usuario",
+        loading: "Registrando usuario...",
+    };
+    const [buttonText, setButtonText] = useState( buttonValues['initial'] );
+
+    // ? Obtenemos la función para registrar un usuario
+    const { register } = useAuth();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -13,17 +33,18 @@ export const Register = () => {
             name: nameRef.current.value,
             email: emailRef.current.value,
             password: passwordRef.current.value,
-            password_confirmation: passwordConfirmationRef.current.value
+            password_confirmation: passwordConfirmationRef.current.value,
+            
         };
 
-        try {
-            await axiosInstance("/sanctum/csrf-cookie");
+        setIsLoading(true); // * Activamos el loader
+        setButtonText( buttonValues['loading'] ); // * Cambiamos el texto del botón
 
-            await axiosInstance.post("/register", datos);
+        // ? Registramos al usuario
+        await register( datos );
 
-        } catch (error) {
-            console.log( Object.values(error.response.data.errors) );
-        }
+        setIsLoading(false); // * Desactivamos el loader
+        setButtonText( buttonValues['initial'] ); // * Cambiamos el texto del botón
     }
 
     return (
@@ -40,12 +61,16 @@ export const Register = () => {
                     </h2>
                 </div>
                 <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-[480px]">
-                    <div className="bg-white px-6 py-12 shadow sm:rounded-lg sm:px-12">
-                        <form onSubmit={ handleSubmit } noValidate className="space-y-6">
+                    <div className="bg-white px-6 pt-6 py-12 shadow sm:rounded-lg sm:px-12">
+                        { alerts.length > 0 && (
+                            <Alert />
+                        )}
+                        <form onSubmit={ handleSubmit } noValidate className="space-y-6 mt-6">
                             {
-                                loginForm.map((input, index) => (
+                                registerForm.map((input, index) => (
                                     <div key={ index }>
-                                        <label htmlFor={ input.name } className="block text-sm font-medium leading-6 text-gray-900 pl-2">
+                                        <label htmlFor={ input.name } className="flex items-center gap-2 text-sm font-medium leading-6 text-gray-800 pl-2">
+                                            { input.icon }
                                             { input.label }
                                         </label>
                                         <div className="mt-2">
@@ -55,6 +80,7 @@ export const Register = () => {
                                                 type={ input.type }
                                                 placeholder={ input.placeholder }
                                                 ref={ input.ref }
+                                                autoComplete={ input.autoComplete }
                                                 className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                                             />
                                         </div>
@@ -63,12 +89,14 @@ export const Register = () => {
                             }
                             
                             <div>
-                                <button
+                                <Button 
+                                    content={ buttonText }
                                     type="submit"
-                                    className="flex w-full justify-center mt-10 rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                                    >
-                                    Sign in
-                                </button>
+                                    appearance="primary"
+                                    isLoading={ isLoading }
+                                    disabled={ isLoading }
+                                    className="mt-10"
+                                />
                             </div>
                         </form>
                     </div>

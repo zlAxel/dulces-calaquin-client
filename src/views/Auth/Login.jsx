@@ -1,16 +1,27 @@
 
 import { Link } from "react-router-dom"
-import { axiosInstance } from "../../config/axios";
 
-import loginForm, { emailRef, passwordRef } from "../../forms/login"
+import loginForm, { emailRef, passwordRef, rememberRef, rememberMeForm } from "../../forms/login"
 import { Button } from "../../components/utility/Button";
 import { useState } from "react";
 import { useAuth } from "../../hooks/useAuth";
+import { useApp } from "../../hooks/useApp";
+import { Alert } from "../../components/Alert";
+
 
 export const Login = () => {
+
+    // ? Obtenemos las alertas del context
+    const { alerts } = useApp();
     
     // ? Creamos los states
     const [isLoading, setIsLoading] = useState(false);
+
+    const buttonValues = {
+        initial: "Iniciar sesión",
+        loading: "Iniciando sesión...",
+    };
+    const [buttonText, setButtonText] = useState( buttonValues['initial'] );
 
     // ? Obtenemos el hook para iniciar sesión
     const { login } = useAuth();
@@ -27,11 +38,13 @@ export const Login = () => {
         };
 
         setIsLoading(true); // * Activamos el loader
+        setButtonText( buttonValues['loading'] ); // * Cambiamos el texto del botón
 
         // ? Iniciamos sesión
         await login( datos );
 
         setIsLoading(false); // * Desactivamos el loader
+        setButtonText( buttonValues['initial'] ); // * Cambiamos el texto del botón
     }
 
     return (
@@ -48,12 +61,16 @@ export const Login = () => {
                     </h2>
                 </div>
                 <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-[480px]">
-                    <div className="bg-white px-6 py-12 shadow sm:rounded-lg sm:px-12">
-                        <form onSubmit={ handleSubmit } noValidate className="space-y-6">
+                    <div className="bg-white px-6 py-12 pt-6 shadow sm:rounded-lg sm:px-12">
+                        { alerts.length > 0 && (
+                            <Alert />
+                        )}
+                        <form onSubmit={ handleSubmit } noValidate className="space-y-6 mt-6">
                             {
                                 loginForm.map((input, index) => (
                                     <div key={ index }>
-                                        <label htmlFor={ input.name } className="block text-sm font-medium leading-6 text-gray-900 pl-2">
+                                        <label htmlFor={ input.name } className="flex items-center gap-2 text-sm font-medium leading-6 text-gray-800 pl-2">
+                                            { input.icon }
                                             { input.label }
                                         </label>
                                         <div className="mt-2">
@@ -63,39 +80,40 @@ export const Login = () => {
                                                 type={ input.type }
                                                 placeholder={ input.placeholder }
                                                 ref={ input.ref }
+                                                disabled={ isLoading }
                                                 className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                                             />
                                         </div>
                                     </div>
                                 ))
                             }
-                            
                             <div className="flex items-center justify-between px-2">
-                                <div className="flex items-center">
-                                    <input
-                                        id="remember-me"
-                                        name="remember-me"
-                                        type="checkbox"
-                                        className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
-                                    />
-                                    <label htmlFor="remember-me" className="ml-3 block text-sm leading-6 text-gray-900">
-                                        Remember me
-                                    </label>
-                                </div>
-
+                                { rememberMeForm.map((input, index) => (
+                                    <div key={ index } className="flex items-center">
+                                        <input
+                                            id={ input.name }
+                                            name={ input.name }
+                                            type={ input.type }
+                                            className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600 cursor-pointer"
+                                        />
+                                        <label htmlFor={ input.name } className="ml-3 block text-sm leading-6 text-gray-900 select-none cursor-pointer">
+                                            { input.label }
+                                        </label>
+                                    </div>
+                                )) }
                                 <div className="text-sm leading-6">
-                                    <a href="#" className="font-semibold text-indigo-600 hover:text-indigo-500">
-                                        Forgot password?
-                                    </a>
+                                    <Link to="/auth/recover-password" className="font-semibold text-indigo-600 hover:text-indigo-500">
+                                        ¿Olvidaste tu contraseña?
+                                    </Link>
                                 </div>
                             </div>
-
                             <div>
                                 <Button 
-                                    content="Iniciar sesión"
+                                    content={ buttonText }
                                     type="submit"
                                     appearance="primary"
                                     isLoading={ isLoading }
+                                    disabled={ isLoading }
                                 />
                             </div>
                         </form>

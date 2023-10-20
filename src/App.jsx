@@ -1,9 +1,9 @@
 
 // ! Importaciones de React Router DOM
 
-import { useEffect } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
-import { useAuth } from "./hooks/useAuth";
+import { Layout } from "./layouts/Layout";
+import { LayoutAuth } from "./layouts/LayoutAuth";
 
 // ! Importaciones de Componentes
 
@@ -13,19 +13,28 @@ import { Register } from "./views/Auth/Register";
 const Hola = () => <h1>Terrible pvton</h1>;
 
 function App() {
-
-    const { check } = useAuth(); // * Extraemos el estado de autenticación y la función para validar la sesión
-
-    useEffect(() => {
-        check(); // * Validamos si la sesión es activa
-    }, [])
-    
-    
     return (
         <Routes>
-            <Route path="/" element={ <Hola /> } exact />
-            <Route path="/auth/login" element={ <Login /> } />
-            <Route path="/auth/register" element={ <Register /> } />
+
+            {/**
+             * // ! Rutas de la Aplicación
+            */}
+            <Route path="/" element={ <Layout /> } exact>
+                <Route index element={ <Hola /> } />
+            </Route>
+
+            {/**
+             * // ! Rutas de Autenticación 
+            */}
+            <Route path="/auth" element={ <LayoutAuth /> } >
+                <Route index element={ <Navigate to="login" /> } />
+                
+                <Route path="login" element={ <Login /> } />
+                <Route path="register" element={<Register />} />
+
+                {/* // ? Agregar login para punto de venta */}
+                
+            </Route>
         </Routes>
     )
 }

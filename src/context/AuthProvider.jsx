@@ -1,16 +1,16 @@
 
 import { axiosInstance } from "../config/axios";
 import { useNavigate } from "react-router-dom";
-import { createContext, useState } from "react";
+import { createContext } from "react";
+import { useApp } from "../hooks/useApp";
 
 
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
 
-    const [isAuthenticated, setIsAuthenticated] = useState( false ); // * Estado para saber si el usuario está autenticado
-
-    const navigate = useNavigate();
+    const { setAlerts } = useApp();         // * Obtenemos la función para mostrar alertas
+    const navigate      = useNavigate();    // * Obtenemos la función para navegar entre rutas
 
     // TODO | Creamos la función para iniciar sesión
     const login = async ( datos ) => {
@@ -18,12 +18,11 @@ export const AuthProvider = ({ children }) => {
             await csrf();
             await axiosInstance.post("/login", datos)
                 .then( () => {
-                    setIsAuthenticated( true );
                     navigate("/");
                 });
 
         } catch (error) {
-            console.log( error );
+            setAlerts( Object.values( error.response.data.errors ) );
         }
     };
     
@@ -33,20 +32,35 @@ export const AuthProvider = ({ children }) => {
             await axiosInstance.post("/logout")
                 .then( () => {
                     // mutateUser();
-                    setIsAuthenticated( false );
                 });
         } catch (error) {
             console.log(error);
         }
     };
 
+    const register = async ( datos ) => {
+        try {
+            await csrf();
+            await axiosInstance.post("/register", datos)
+                .then( () => {
+                    navigate("/");
+                });
+
+        } catch (error) {
+            setAlerts( Object.values(error.response.data.errors) );
+        }
+    };
+
     // TODO | Validamos si la cookie existe
-    const check = async () => {
+    const check = async ( from ) => {
         axiosInstance("/api/user")
         .then( () => {
-            navigate("/");
-        }).catch( () => {
-            navigate("/auth/login");
+            if ( from === "Auth" )
+                navigate("/"); 
+        })
+        .catch( () => {
+            if ( from !== "Auth" )
+                navigate("/auth/login");
         });
     };
 
@@ -61,10 +75,10 @@ export const AuthProvider = ({ children }) => {
 
     return (
         <AuthContext.Provider value={{
-            isAuthenticated,
             login,
             logout,
             check,
+            register,
         }}>
             { children }
         </AuthContext.Provider>

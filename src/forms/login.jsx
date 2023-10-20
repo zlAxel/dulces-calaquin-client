@@ -1,15 +1,16 @@
 
 import { createRef } from "react";
+import { AtSymbolIcon, LockClosedIcon } from '@heroicons/react/24/outline'
+
 
 // ! ----------------------------------------------------
 // ! Creamos los estados de los inputs 
 // ! del formulario del login
 // ! ----------------------------------------------------
 
-export const nameRef                 = createRef();
-export const emailRef                = createRef();
-export const passwordRef             = createRef();
-export const passwordConfirmationRef = createRef();
+export const emailRef    = createRef();
+export const passwordRef = createRef();
+export const rememberRef = createRef();
 
 // ! ----------------------------------------------------
 // ! Creamos los inputs del formulario del login
@@ -17,16 +18,10 @@ export const passwordConfirmationRef = createRef();
 
 const loginForm = [
     {
-        label: "Nombre",
-        name: "name",
-        type: "text",
-        placeholder: "Ingresa tu nombre",
-        ref: nameRef
-    },
-    {
         label: "Correo electrónico",
         name: "email",
         type: "email",
+        icon: <AtSymbolIcon className="h-4 w-4" />,
         placeholder: "Ingresa tu correo electrónico",
         ref: emailRef
     },
@@ -34,16 +29,20 @@ const loginForm = [
         label: "Contraseña",
         name: "password",
         type: "password",
+        icon: <LockClosedIcon className="h-4 w-4" />,
         placeholder: "Ingresa tu contraseña",
         ref: passwordRef
-    },
-    {
-        label: "Confirmar contraseña",
-        name: "password_confirmation",
-        type: "password",
-        placeholder: "Confirma tu contraseña",
-        ref: passwordConfirmationRef
     }
 ];
+
+export const rememberMeForm = [
+    {
+        label: "Recordar mi cuenta",
+        name: "remember",
+        type: "checkbox",
+        placeholder: "Recordar mi cuenta",
+        ref: rememberRef
+    }
+]
 
 export default loginForm;
