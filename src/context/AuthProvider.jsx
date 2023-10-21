@@ -1,7 +1,7 @@
 
 import { axiosInstance } from "../config/axios";
 import { useNavigate } from "react-router-dom";
-import { createContext } from "react";
+import { createContext, useState } from "react";
 import { useApp } from "../hooks/useApp";
 
 
@@ -11,6 +11,9 @@ export const AuthProvider = ({ children }) => {
 
     const { setAlerts } = useApp();         // * Obtenemos la función para mostrar alertas
     const navigate      = useNavigate();    // * Obtenemos la función para navegar entre rutas
+
+    const [title, setTitle] = useState('');       // * Creamos el state para el título de la página
+    const [subtitle, setSubtitle] = useState(''); // * Creamos el state para el subtítulo de la página
 
     // TODO | Creamos la función para iniciar sesión
     const login = async ( datos ) => {
@@ -64,6 +67,20 @@ export const AuthProvider = ({ children }) => {
         });
     };
 
+    // TODO | Creamos la función para buscar un usuario
+    const searchUser = async ( datos ) => {
+        try {
+            const { data } = await axiosInstance.post("/api/search-user", datos)
+                .catch( (error) => {
+                    console.log(error);
+                });
+
+            return data;
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
     // TODO | Creamos la función para obtener el CSRF Token
     const csrf = async () => {
         try {
@@ -79,6 +96,9 @@ export const AuthProvider = ({ children }) => {
             logout,
             check,
             register,
+            searchUser,
+            title, subtitle,
+            setTitle, setSubtitle,
         }}>
             { children }
         </AuthContext.Provider>

@@ -1,6 +1,6 @@
 
 import { createRef } from "react";
-import { UserCircleIcon, AtSymbolIcon, LockClosedIcon, FingerPrintIcon, QuestionMarkCircleIcon, ExclamationCircleIcon } from '@heroicons/react/24/outline'
+import { UserCircleIcon, AtSymbolIcon, LockClosedIcon, FingerPrintIcon, QuestionMarkCircleIcon } from '@heroicons/react/24/outline'
 import { TooltipApp } from "../components/TooltipApp";
 
 // ! ----------------------------------------------------
@@ -18,7 +18,7 @@ const LabelPin = () => (
     <>
         <span data-tooltip-id="my-tooltip-children-multiline" className="flex items-center cursor-help">
             Pin para autorizar compras
-            <QuestionMarkCircleIcon className="h-4 w-4 ml-2 text-indigo-700" />
+            <QuestionMarkCircleIcon className="h-4 w-4 ml-2 text-primary-700" />
         </span>
         <TooltipApp
             id="my-tooltip-children-multiline"

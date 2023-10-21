@@ -8,6 +8,7 @@ import { LayoutAuth } from "./layouts/LayoutAuth";
 // ! Importaciones de Componentes
 
 import { Login } from "./views/Auth/Login";
+import { LoginPunto } from "./views/Auth/LoginPunto";
 import { Register } from "./views/Auth/Register";
 
 const Hola = () => <h1>Terrible pvton</h1>;
@@ -33,7 +34,7 @@ function App() {
                 <Route path="register" element={<Register />} />
 
                 {/* // ? Agregar login para punto de venta */}
-                
+                <Route path="punto-venta" element={ <LoginPunto /> } />
             </Route>
         </Routes>
     )
