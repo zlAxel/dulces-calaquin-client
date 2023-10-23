@@ -6,6 +6,7 @@ import { Button } from "../../components/utility/Button";
 import { useEffect, useState } from "react";
 import { useAuth } from "../../hooks/useAuth";
 import { UserPlusIcon } from '@heroicons/react/24/outline'
+import { InputText } from "../../components/utility/InputText";
 
 
 export const Login = () => {
@@ -36,7 +37,8 @@ export const Login = () => {
         const datos = {
             email: emailRef.current.value,
             password: passwordRef.current.value,
-            remember: false
+            remember: rememberRef.current.checked,
+            login_type: 'login',
         };
 
         setIsLoading(true); // * Activamos el loader
@@ -60,14 +62,13 @@ export const Login = () => {
                                 { input.label }
                             </label>
                             <div className="mt-2">
-                                <input
+                                <InputText
                                     id={ input.name }
                                     name={ input.name }
                                     type={ input.type }
                                     placeholder={ input.placeholder }
                                     ref={ input.ref }
                                     disabled={ isLoading }
-                                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6"
                                 />
                             </div>
                         </div>
@@ -80,6 +81,7 @@ export const Login = () => {
                                 id={ input.name }
                                 name={ input.name }
                                 type={ input.type }
+                                ref={ input.ref }
                                 className="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-600 cursor-pointer"
                             />
                             <label htmlFor={ input.name } className="ml-3 block text-sm leading-6 text-gray-900 select-none cursor-pointer">

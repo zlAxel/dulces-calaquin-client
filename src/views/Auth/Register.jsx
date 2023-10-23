@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom"
 import { Alert } from "../../components/Alert";
 import { Button } from "../../components/utility/Button";
+import { InputText } from "../../components/utility/InputText";
 
 import registerForm, { nameRef, emailRef, passwordRef, passwordConfirmationRef, pinRef } from "../../forms/register"
 
@@ -40,7 +41,7 @@ export const Register = () => {
             email: emailRef.current.value,
             password: passwordRef.current.value,
             password_confirmation: passwordConfirmationRef.current.value,
-            
+            pin: pinRef.current.value,
         };
 
         setIsLoading(true); // * Activamos el loader
@@ -64,7 +65,7 @@ export const Register = () => {
                                 { input.label }
                             </label>
                             <div className="mt-2">
-                                <input
+                                <InputText
                                     id={ input.name }
                                     name={ input.name }
                                     type={ input.type }

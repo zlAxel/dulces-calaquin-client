@@ -14,6 +14,7 @@ export const AuthProvider = ({ children }) => {
 
     const [title, setTitle] = useState('');       // * Creamos el state para el título de la página
     const [subtitle, setSubtitle] = useState(''); // * Creamos el state para el subtítulo de la página
+    const [loginType, setLoginType] = useState( window.localStorage.getItem('login_type') || 'login'); // * Creamos el state para saber a donde redireccionar
 
     // TODO | Creamos la función para iniciar sesión
     const login = async ( datos ) => {
@@ -21,6 +22,22 @@ export const AuthProvider = ({ children }) => {
             await csrf();
             await axiosInstance.post("/login", datos)
                 .then( () => {
+                    window.localStorage.setItem("login_type", "login");
+                    navigate("/");
+                });
+
+        } catch (error) {
+            setAlerts( Object.values( error.response.data.errors ) );
+        }
+    };
+
+    // TODO | Creamos la función para iniciar sesión en el punto de venta
+    const login_punto = async ( datos ) => {
+        try {
+            await csrf();
+            await axiosInstance.post("/login-punto", datos)
+                .then( () => {
+                    window.localStorage.setItem("login_type", "login_punto");
                     navigate("/");
                 });
 
@@ -54,7 +71,7 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
-    // TODO | Validamos si la cookie existe
+    // TODO | Validamos si la sesión está activa
     const check = async ( from ) => {
         axiosInstance("/api/user")
         .then( () => {
@@ -62,17 +79,21 @@ export const AuthProvider = ({ children }) => {
                 navigate("/"); 
         })
         .catch( () => {
-            if ( from !== "Auth" )
-                navigate("/auth/login");
+            if ( from !== "Auth" ){
+                if ( loginType === "login" )
+                    navigate("/auth/login");
+                else
+                    navigate("/auth/punto-venta");
+            }
         });
     };
 
     // TODO | Creamos la función para buscar un usuario
     const searchUser = async ( datos ) => {
         try {
-            const { data } = await axiosInstance.post("/api/search-user", datos)
+            const data = await axiosInstance.post("/api/search-user", datos)
                 .catch( (error) => {
-                    console.log(error);
+                    setAlerts( error.response.data.errors.email );
                 });
 
             return data;
@@ -93,6 +114,7 @@ export const AuthProvider = ({ children }) => {
     return (
         <AuthContext.Provider value={{
             login,
+            login_punto,
             logout,
             check,
             register,

@@ -1,16 +1,20 @@
 
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 
 import { emailRef, pinRef, emailForm, pinForm } from "../../forms/login_punto"
 import { Button } from "../../components/utility/Button";
 import { useEffect, useState } from "react";
 import { useAuth } from "../../hooks/useAuth";
-import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+import { ExclamationTriangleIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { ButtonInside } from "../../components/utility/ButtonInside";
 import { useApp } from "../../hooks/useApp";
+import { InputText } from "../../components/utility/InputText";
+import { AlertModal } from "../../components/AlertModal";
 
 
 export const LoginPunto = () => {
+
+    const navigate = useNavigate(); // * Navegación entre rutas
 
     // ? Creamos los states
     const [isLoading, setIsLoading] = useState(false);
@@ -24,65 +28,88 @@ export const LoginPunto = () => {
     const [buttonText, setButtonText] = useState( buttonValues['initial'] );
 
     // ? Obtenemos el hook para iniciar sesión
-    const { login, setTitle, searchUser } = useAuth();
+    const { login_punto, setTitle, searchUser } = useAuth();
+    const { alerts, setAlerts, toggleModal, setToggleModal } = useApp();
 
-    // ? Obtenemos la función para setear alertas
-    const { setAlerts } = useApp();
-
-    // ? Cambiamos el título 
+    // ? Cambiamos el título de la página
     useEffect(() => {
         setTitle('Iniciar sesión');
     }, [])
-    
 
     // ? Función para enviar el formulario
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        const email = emailRef.current.value;
+        // ? Si el usuario existe ejecutamos la función para iniciar sesión
+        if( userFind ){
 
-        if( ! email ){
-            setAlerts(['Debes ingresar un correo electrónico.']);
-            handleSearch(); // * Buscamos el usuario
-            return;
+            // ? Obtenemos los valores de los inputs
+            const datos = {
+                email: emailRef.current.value,
+                pin: pinRef.current.value,
+                remember: false,
+                login_type: 'login_punto',
+            };
+    
+            setIsLoading(true); // * Activamos el loader
+            setButtonText( buttonValues['loading'] ); // * Cambiamos el texto del botón
+    
+            // ? Iniciamos sesión
+            await login_punto( datos );
+    
+            setIsLoading(false); // * Desactivamos el loader
+            setButtonText( buttonValues['initial'] ); // * Cambiamos el texto del botón
+
         }
-        
-        // ? Obtenemos los valores de los inputs
-        const datos = {
-            email: email,
-            pin: pinRef.current.value,
-        };
-
-        setIsLoading(true); // * Activamos el loader
-        setButtonText( buttonValues['loading'] ); // * Cambiamos el texto del botón
-
-        // ? Iniciamos sesión
-        await login( datos );
-
-        setIsLoading(false); // * Desactivamos el loader
-        setButtonText( buttonValues['initial'] ); // * Cambiamos el texto del botón
     }
 
     // ? Función para buscar el usuario
     const handleSearch = async () => {
-        
+        const email = emailRef.current.value;
+
         setIsLoadingSearch(true); // * Activamos el loader
 
         // ? Creamos el objeto con el email
         const datos = {
-            email: emailRef.current.value,
+            email: email,
         };
 
         // ? Buscamos el usuario
-        const userFind = await searchUser( datos );
-        setUserFind( userFind );
+        const userExists = await searchUser( datos );
+        if( userExists ){
+            setUserFind( userExists.data );
+            setAlerts([]);
+        }
+        // ? Si el usuario no existe, mostramos el modal para crear una cuenta
+        if( userExists && userExists.data === false )
+            setToggleModal( true ); // * Mostramos el modal
+        
+        // ? Si hay error y el usuario no existe, definimos falso el usuario
+        if( alerts[0] && ! userExists ){
+            setUserFind( false );
+        }
 
         setIsLoadingSearch(false); // * Desactivamos el loader
-        
+    };
+
+    const handleCreateAccount = () => {
+        setToggleModal( false ); // * Ocultamos el modal
+        setTimeout(() => {
+            navigate('/auth/register'); // * Redireccionamos a la página de registro
+        }, 300);
     };
 
     return (
         <>
+            <AlertModal
+                title="Cuenta no encontrada"
+                message="No se encontró ninguna cuenta con el correo electrónico ingresado ¿Deseas crear una cuenta?"
+                actionButtonText="Crear cuenta"
+                toggleModal={ toggleModal }
+                setToggleModal={ setToggleModal }
+                actionButton={ handleCreateAccount }
+                type="info"
+            />
             <form onSubmit={ handleSubmit } noValidate className="space-y-6 mt-6">
                 <div>
                     <label htmlFor={ emailForm.name } className="flex items-center gap-2 text-sm font-medium leading-6 text-gray-800 pl-2">
@@ -90,14 +117,14 @@ export const LoginPunto = () => {
                         { emailForm.label }
                     </label>
                     <div className="relative mt-2 flex items-center">
-                        <input
+                        <InputText
                             id={ emailForm.name }
                             name={ emailForm.name }
                             type={ emailForm.type }
                             placeholder={ emailForm.placeholder }
                             ref={ emailForm.ref }
-                            disabled={ isLoading }
-                            className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6"
+                            disabled={ isLoadingSearch || isLoading }
+                            error={ alerts[0] }
                         />
                         <div className="absolute inset-y-0 right-0 flex py-1.5 pr-1.5">
                             <ButtonInside
@@ -110,6 +137,14 @@ export const LoginPunto = () => {
                             />
                         </div>
                     </div>
+                    {
+                        alerts[0] && (
+                            <p className="mt-3 ml-2 text-xs text-slate-700 flex items-center gap-2" id="email-error">
+                                <ExclamationTriangleIcon className="h-4 w-4 text-red-600" />
+                                { alerts[0] }
+                            </p>
+                        )
+                    }
                 </div>
                 {
                 userFind && (
@@ -120,14 +155,14 @@ export const LoginPunto = () => {
                                 { pinForm.label }
                             </label>
                             <div className="mt-2">
-                                <input
+                                <InputText
                                     id={ pinForm.name }
                                     name={ pinForm.name }
                                     type={ pinForm.type }
                                     placeholder={ pinForm.placeholder }
                                     ref={ pinForm.ref }
                                     disabled={ isLoading }
-                                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6"
+                                    error={ alerts[0] }
                                 />
                             </div>
                         </div>

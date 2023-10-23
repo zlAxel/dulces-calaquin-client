@@ -12,6 +12,9 @@ import './assets/css/main.css'
 import { AppProvider } from './context/AppProvider';
 import { AuthProvider } from './context/AuthProvider';
 
+// ? Accede a la variable de entorno
+const siteTitle = import.meta.env.VITE_NAME_APP;
+
 ReactDOM.createRoot(document.getElementById('root')).render(
 	<React.StrictMode>
 		<BrowserRouter>
@@ -23,3 +26,6 @@ ReactDOM.createRoot(document.getElementById('root')).render(
 		</BrowserRouter>
 	</React.StrictMode>,
 )
+
+document.title = siteTitle; // Establece el título del documento
+
