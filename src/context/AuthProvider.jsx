@@ -10,8 +10,9 @@ export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
 
-    const { setAlerts } = useApp();         // * Obtenemos la función para mostrar alertas
-    const navigate      = useNavigate();    // * Obtenemos la función para navegar entre rutas
+    const navigate = useNavigate();    // * Obtenemos la función para navegar entre rutas
+
+    const { setAlerts, setUser } = useApp();         // * Obtenemos la función para mostrar alertas
 
     const [title, setTitle] = useState('');       // * Creamos el state para el título de la página
     const [subtitle, setSubtitle] = useState(''); // * Creamos el state para el subtítulo de la página
@@ -42,6 +43,12 @@ export const AuthProvider = ({ children }) => {
     // TODO | Creamos la función para iniciar sesión en el punto de venta
     const login_punto = async ( datos ) => {
         try {
+            // ? Obtenemos la contraseña con destructuring
+            let { pin } = datos;
+
+            const pinCrypt = encryptData(pin, secretPass); // * Encriptamos la contraseña
+            datos.pin      = pinCrypt; // * Metemos la contraseña en el objeto
+
             await csrf();
             await axiosInstance.post("/login-punto", datos)
                 .then( () => {
@@ -71,6 +78,17 @@ export const AuthProvider = ({ children }) => {
 
     const register = async ( datos ) => {
         try {
+            // ? Obtenemos la contraseña con destructuring
+            let { password, password_confirmation, pin } = datos;
+
+            const passwordCrypt             = encryptData(password, secretPass);                // * Encriptamos la contraseña
+            const passwordConfirmationCrypt = encryptData(password_confirmation, secretPass);   // * Encriptamos la contraseña de confirmación
+            const pinCrypt                  = encryptData(pin, secretPass);                     // * Encriptamos el PIN 
+
+            datos.password              = passwordCrypt; // * Metemos la contraseña en el objeto
+            datos.password_confirmation = passwordConfirmationCrypt; // * Metemos la contraseña en el objeto
+            datos.pin                   = pinCrypt; // * Metemos la contraseña en el objeto
+
             await csrf();
             await axiosInstance.post("/register", datos)
                 .then( () => {
@@ -85,11 +103,17 @@ export const AuthProvider = ({ children }) => {
     // TODO | Validamos si la sesión está activa
     const check = async ( from ) => {
         axiosInstance("/api/user")
-        .then( () => {
+        .then( user => {
+            // ? Guardamos al usuario en el state
+            setUser( user.data );
+
             if ( from === "Auth" )
                 navigate("/"); 
         })
         .catch( () => {
+            // ? Vaciamos el state del usuario
+            setUser({});
+
             if ( from !== "Auth" ){
                 if ( loginType === "login" )
                     navigate("/auth/login");

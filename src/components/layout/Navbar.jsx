@@ -6,10 +6,13 @@ import {
     Bars3Icon,
     BellIcon,
     ChevronDownIcon,
-    ArrowRightOnRectangleIcon
+    ArrowRightOnRectangleIcon,
+    ShoppingCartIcon
 } from '@heroicons/react/24/outline';
 import { Logo } from "../utility/Logo";
 import { useAuth } from '../../hooks/useAuth';
+import { useApp } from '../../hooks/useApp';
+import defaultProfilePic from '/media/profiles/default/profile_pic.webp';
 
 function classNames(...classes) {
     return classes.filter(Boolean).join(' ');
@@ -18,6 +21,7 @@ function classNames(...classes) {
 export const Navbar = ({ sidebarOpen, setSidebarOpen }) => {
 
     const { logout } = useAuth(); // * Obtenemos el hook para cerrar sesión
+    const { user }   = useApp(); // * Obtenemos el hook para cerrar sesión
 
     const userNavigation = [
         // { name: 'Your profile', url: '#' },
@@ -44,9 +48,13 @@ export const Navbar = ({ sidebarOpen, setSidebarOpen }) => {
                     </button>
                 </div>
                 <div className="flex items-center gap-x-4 lg:gap-x-6">
-                    <button type="button" className="-m-2.5 p-2.5 text-gray-400 hover:text-gray-500">
+                    {/* <button type="button" className="-m-2.5 p-2.5 text-gray-400 hover:text-gray-500">
                         <span className="sr-only">Ver notificaciones</span>
                         <BellIcon className="h-6 w-6" aria-hidden="true" />
+                    </button> */}
+                    <button type="button" className="-m-2.5 p-2.5 text-gray-600 hover:text-gray-700">
+                        <span className="sr-only">Ver carrito de compras</span>
+                        <ShoppingCartIcon className="h-6 w-6" aria-hidden="true" />
                     </button>
 
                     {/* Separator */}
@@ -54,52 +62,52 @@ export const Navbar = ({ sidebarOpen, setSidebarOpen }) => {
 
                     {/* Profile dropdown */}
                     <Menu as="div" className="relative">
-                    <Menu.Button className="-m-1.5 flex items-center p-1.5">
-                        <span className="sr-only">Abrir menú de usuario</span>
-                        <img
-                        className="h-8 w-8 rounded-full bg-gray-50"
-                        src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                        alt=""
-                        />
-                        <span className="hidden lg:flex lg:items-center">
-                        <span className="ml-4 text-sm font-semibold leading-6 text-gray-900" aria-hidden="true">
-                            Tom Cook
-                        </span>
-                        <ChevronDownIcon className="ml-2 h-5 w-5 text-gray-400" aria-hidden="true" />
-                        </span>
-                    </Menu.Button>
-                    <Transition
-                        as={Fragment}
-                        enter="transition ease-out duration-100"
-                        enterFrom="transform opacity-0 scale-95"
-                        enterTo="transform opacity-100 scale-100"
-                        leave="transition ease-in duration-75"
-                        leaveFrom="transform opacity-100 scale-100"
-                        leaveTo="transform opacity-0 scale-95"
-                        >
-                        <Menu.Items className="absolute right-0 z-10 mt-2.5 w-44 origin-top-right rounded-md bg-white py-2 shadow-lg ring-1 ring-gray-900/5 focus:outline-none">
-                        {userNavigation.map((item) => (
-                            <Menu.Item key={item.name}>
-                                {({ active }) => (
-                                <a
-                                    href={item.href}
-                                    className={classNames(
-                                        active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
-                                        'group flex items-center px-4 py-2 text-sm font-medium cursor-pointer transition-colors duration-100'
+                        <Menu.Button className="-m-1.5 flex items-center p-1.5">
+                            <span className="sr-only">Abrir menú de usuario</span>
+                            <img
+                                className="h-8 w-8 rounded-full bg-gray-50"
+                                src={ user?.profile_pic || defaultProfilePic }
+                                alt="Foto de perfil"
+                            />
+                            <span className="hidden lg:flex lg:items-center">
+                                <span className="ml-4 text-sm font-semibold leading-6 text-gray-900" aria-hidden="true">
+                                    { user?.name }
+                                </span>
+                                <ChevronDownIcon className="ml-2 h-5 w-5 text-gray-400" aria-hidden="true" />
+                            </span>
+                        </Menu.Button>
+                        <Transition
+                            as={Fragment}
+                            enter="transition ease-out duration-100"
+                            enterFrom="transform opacity-0 scale-95"
+                            enterTo="transform opacity-100 scale-100"
+                            leave="transition ease-in duration-75"
+                            leaveFrom="transform opacity-100 scale-100"
+                            leaveTo="transform opacity-0 scale-95"
+                            >
+                            <Menu.Items className="absolute right-0 z-10 mt-2.5 w-44 origin-top-right rounded-md bg-white py-2 shadow-lg ring-1 ring-gray-900/5 focus:outline-none">
+                                {userNavigation.map((item) => (
+                                    <Menu.Item key={item.name}>
+                                        {({ active }) => (
+                                        <a
+                                            href={item.href}
+                                            className={classNames(
+                                                active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
+                                                'group flex items-center px-4 py-2 text-sm font-medium cursor-pointer transition-colors duration-100'
+                                            )}
+                                            onClick={ item.action }
+                                            >
+                                            <item.icon
+                                                className="mr-3 h-5 w-5 text-gray-400 group-hover:text-red-500"
+                                                aria-hidden="true"
+                                            />
+                                            {item.name}
+                                        </a>
                                     )}
-                                    onClick={ item.action }
-                                    >
-                                    <item.icon
-                                        className="mr-3 h-5 w-5 text-gray-400 group-hover:text-red-500"
-                                        aria-hidden="true"
-                                    />
-                                    {item.name}
-                                </a>
-                            )}
-                            </Menu.Item>
-                        ))}
-                        </Menu.Items>
-                    </Transition>
+                                    </Menu.Item>
+                                ))}
+                            </Menu.Items>
+                        </Transition>
                     </Menu>
                 </div>
             </div>

@@ -11,7 +11,7 @@ import { Login } from "./views/Auth/Login";
 import { LoginPunto } from "./views/Auth/LoginPunto";
 import { Register } from "./views/Auth/Register";
 
-const Hola = () => <h1>Terrible pvton</h1>;
+const Hola = () => <h1>¿Qué se te antoja hoy? <br /> Ver productos</h1>;
 
 function App() {
     return (
