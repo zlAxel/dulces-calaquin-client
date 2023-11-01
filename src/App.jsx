@@ -5,13 +5,12 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import { Layout } from "./layouts/Layout";
 import { LayoutAuth } from "./layouts/LayoutAuth";
 
-// ! Importaciones de Componentes
+// ! Importaciones de Vistas
 
 import { Login } from "./views/Auth/Login";
 import { LoginPunto } from "./views/Auth/LoginPunto";
 import { Register } from "./views/Auth/Register";
-
-const Hola = () => <h1>¿Qué se te antoja hoy? <br /> Ver productos</h1>;
+import { Store } from "./views/Store";
 
 function App() {
     return (
@@ -21,7 +20,7 @@ function App() {
              * // ! Rutas de la Aplicación
             */}
             <Route path="/" element={ <Layout /> } exact>
-                <Route index element={ <Hola /> } />
+                <Route index element={ <Store /> } />
             </Route>
 
             {/**

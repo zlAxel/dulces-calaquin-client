@@ -1,7 +1,7 @@
 
 import { Spinner } from "./Spinner"
 
-export const Button = ({ content, type, appearance, isLoading, className, icon }) => {
+export const Button = ({ content, type, appearance, isLoading, className, icon, onclick }) => {
 
     const disabledStyles = isLoading ? "opacity-80 cursor-not-allowed" : "";
 
@@ -13,8 +13,12 @@ export const Button = ({ content, type, appearance, isLoading, className, icon }
     return (
         <button
             type={ type }
-            className={ ` ${appearances[appearance]} ${ disabledStyles } ${ className } flex w-full justify-center items-center rounded-md px-3 py-1.5 text-sm font-semibold leading-6 shadow-xl focus-visible:outline focus-visible:outline-2 focus-visible:ring-offset-2 focus-visible:outline-offset-2 focus-visible:ring-2 transition-colors ` }
+            className={ `
+                flex w-full justify-center items-center rounded-md px-3 py-1.5 text-sm font-semibold leading-6 shadow-xl focus-visible:outline focus-visible:outline-2 focus-visible:ring-offset-2 focus-visible:outline-offset-2 focus-visible:ring-2 transition-colors 
+                ${appearances[appearance]} ${ disabledStyles } ${ className }
+            ` }
             disabled={ isLoading }
+            onClick={ onclick }
             >
             { icon }
             { isLoading && <Spinner /> }
@@ -22,4 +26,3 @@ export const Button = ({ content, type, appearance, isLoading, className, icon }
         </button>
     )
 }
-
