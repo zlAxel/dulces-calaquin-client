@@ -7,6 +7,8 @@ import { useApp } from "../hooks/useApp";
 import { Alert } from "../components/Alert";
 import { ArrowLeftOnRectangleIcon } from "@heroicons/react/24/outline";
 import { Logo } from "../components/utility/Logo";
+import { useAutoAnimate } from '@formkit/auto-animate/react';
+
 
 export const LayoutAuth = () => {
 
@@ -24,6 +26,8 @@ export const LayoutAuth = () => {
         setSubtitle(""); // * Limpiamos el subtítulo
     }, [location])
 
+    const [animationParent] = useAutoAnimate(); // * Animación del formulario
+
     return (
         <>
             <div className="flex min-h-full flex-1 flex-col justify-center py-12 sm:px-6 lg:px-8">
@@ -40,11 +44,13 @@ export const LayoutAuth = () => {
                 </div>
                 <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-[480px]">
                     <div className="bg-white px-6 py-12 pt-6 shadow sm:rounded-lg sm:px-12 animate-fade-up animate-duration-[800ms]">
-                        { location.pathname !== "/auth/punto-venta" && 
-                            alerts.length > 0 && (
-                                <Alert />
-                            )
-                        }
+                        <div ref={animationParent}>
+                            { location.pathname !== "/auth/punto-venta" && 
+                                alerts.length > 0 && (
+                                    <Alert />
+                                )
+                            }
+                        </div>
                         <Outlet />
                     </div>
                 </div>

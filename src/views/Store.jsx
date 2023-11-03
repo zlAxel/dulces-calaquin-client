@@ -20,7 +20,7 @@ export const Store = () => {
                 type="button"
                 appearance="primary"
                 icon={ <FireIcon className="relative w-5 h-5 mr-2" /> }
-                onclick={ () => setOpen(true) }
+                onClick={ () => setOpen(true) }
                 className="mt-6"
             />
             <ProductsModal

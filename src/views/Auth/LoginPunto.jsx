@@ -10,6 +10,7 @@ import { ButtonInside } from "../../components/utility/ButtonInside";
 import { useApp } from "../../hooks/useApp";
 import { InputText } from "../../components/utility/InputText";
 import { AlertModal } from "../../components/AlertModal";
+import { useAutoAnimate } from '@formkit/auto-animate/react';
 
 
 export const LoginPunto = () => {
@@ -99,6 +100,8 @@ export const LoginPunto = () => {
         }, 300);
     };
 
+    const [animationParent] = useAutoAnimate(); // * Animación del formulario
+
     return (
         <>
             <AlertModal
@@ -110,7 +113,7 @@ export const LoginPunto = () => {
                 actionButton={ handleCreateAccount }
                 type="info"
             />
-            <form onSubmit={ handleSubmit } noValidate className="space-y-6 mt-6">
+            <form ref={animationParent} onSubmit={ handleSubmit } noValidate className="space-y-6 mt-6">
                 <div>
                     <label htmlFor={ emailForm.name } className="flex items-center gap-2 text-sm font-medium leading-6 text-gray-800 pl-2">
                         { emailForm.icon }
@@ -125,6 +128,7 @@ export const LoginPunto = () => {
                             ref={ emailForm.ref }
                             disabled={ isLoadingSearch || isLoading }
                             error={ alerts[0] }
+                            autoComplete="new-password"
                         />
                         <div className="absolute inset-y-0 right-0 flex py-1.5 pr-1.5">
                             <ButtonInside
@@ -163,6 +167,7 @@ export const LoginPunto = () => {
                                     ref={ pinForm.ref }
                                     disabled={ isLoading }
                                     error={ alerts[0] }
+                                    autoComplete="new-password"
                                 />
                             </div>
                         </div>

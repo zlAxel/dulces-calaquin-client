@@ -1,7 +1,7 @@
 
 import { Spinner } from "./Spinner"
 
-export const ButtonApp = ({ content, type, appearance, isLoading, className, icon, onclick }) => {
+export const ButtonApp = ({ content, type, appearance, isLoading, className, icon, onClick }) => {
 
     const disabledStyles = isLoading ? "opacity-80 !cursor-not-allowed ring-offset-0" : "";
 
@@ -18,7 +18,7 @@ export const ButtonApp = ({ content, type, appearance, isLoading, className, ico
                 ${appearances[appearance]} ${ disabledStyles } ${ className }
             ` }
             disabled={ isLoading }
-            onClick={ onclick }
+            onClick={ onClick }
             >
             <span className="absolute bottom-0 right-0 w-8 h-20 -mb-8 -mr-5 transition-all duration-300 ease-out transform rotate-45 translate-x-1 bg-white opacity-10 group-hover:translate-x-0"></span>
             <span className="absolute top-0 left-0 w-20 h-8 -mt-1 -ml-12 transition-all duration-300 ease-out transform -rotate-45 -translate-x-1 bg-white opacity-10 group-hover:translate-x-0"></span>

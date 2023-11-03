@@ -6,6 +6,8 @@ import { useState, useEffect } from 'react';
 import { SideMenu } from "../components/layout/SideMenu";
 import { Gradients } from "../components/layout/Gradients";
 import { Navbar } from "../components/layout/Navbar";
+import { Toaster) } from "sonner";
+
 
 export const Layout = () => {
     const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -38,6 +40,7 @@ export const Layout = () => {
                         setSidebarOpen={setSidebarOpen}
                     />
 
+                    {/* // TODO | Contenido principal */}
                     <main className="animate-fade-down animate-once">
                         <div className="mx-auto max-w-7xl mt-16 px-4 pb-12 sm:px-6 lg:px-8">
                             <div className="rounded-lg bg-white px-5 py-6 shadow-lg sm:px-6">
@@ -46,6 +49,10 @@ export const Layout = () => {
                         </div>
                     </main>
                 </div>
+                <Toaster
+                    expand={true}
+                    position="top-right" 
+                />
             </div>
         </>
     )
