@@ -6,11 +6,13 @@ import { useState, useEffect } from 'react';
 import { SideMenu } from "../components/layout/SideMenu";
 import { Gradients } from "../components/layout/Gradients";
 import { Navbar } from "../components/layout/Navbar";
-import { Toaster) } from "sonner";
+import { Toaster } from "sonner";
+import { Cart } from "../components/layout/Cart";
 
 
 export const Layout = () => {
-    const [sidebarOpen, setSidebarOpen] = useState(false);
+    const [sidebarOpen, setSidebarOpen] = useState(false); // Estado para controlar el menú lateral
+    const [cartOpen, setCartOpen]       = useState(false); // Estado para controlar el carrito
 
     const { check } = useAuth(); // * Extraemos el estado de autenticación y la función para validar la sesión
 
@@ -28,6 +30,10 @@ export const Layout = () => {
                     sidebarOpen={sidebarOpen}
                     setSidebarOpen={setSidebarOpen}
                 />
+                <Cart
+                    cartOpen={cartOpen}
+                    setCartOpen={setCartOpen}
+                />
 
                 {/* // ? Borders */}
                 <div className="h-3 lg:h-full lg:w-8 lg:fixed lg:inset-y-0 lg:left-0 lg:z-50 lg:block lg:overflow-y-auto bg-gray-900 lg:pb-4" />
@@ -36,8 +42,8 @@ export const Layout = () => {
                 <div className="lg:px-8">
                     {/* // TODO | Menú superior */}
                     <Navbar
-                        sidebarOpen={sidebarOpen}
                         setSidebarOpen={setSidebarOpen}
+                        setCartOpen={setCartOpen}
                     />
 
                     {/* // TODO | Contenido principal */}
@@ -49,9 +55,13 @@ export const Layout = () => {
                         </div>
                     </main>
                 </div>
+                {/* // TODO | Toasts */}
                 <Toaster
                     expand={true}
                     position="top-right" 
+                    toastOptions={{
+                        className: 'w-96',
+                    }}
                 />
             </div>
         </>

@@ -19,11 +19,11 @@ export const ProductsModal = ({open, setOpen}) => {
     const queryRef = useRef(null);
     const { products, handleNotification, cart, setCart } = useApp();
 
-    useEffect(() => {
-        if (Object.values(products).length === 0) return;
-        // setRecent([products[0], products[1]]);
-        setRecent([]);
-    }, [products])
+    // useEffect(() => {
+    //     if ( Object.values(products).length === 0 ) return;
+    //     // setRecent([products[0], products[1]]);
+    //     setRecent([]);
+    // }, [products])
     
 
     const filteredProducts =
@@ -37,9 +37,6 @@ export const ProductsModal = ({open, setOpen}) => {
         // ? Creamos el objeto con la cantidad
         const productFinal = { ...productActive, amount };
 
-        // ? Ejecutamos funciones 
-        setQuery('');
-        
         // ? Antes de agregar el producto a la lista de recientes, verificamos que no esté ya en la lista
         const isRecent = recent.find( product => product.id === productFinal.id );
         if ( ! isRecent ) setRecent([productFinal, ...recent]);
@@ -56,7 +53,6 @@ export const ProductsModal = ({open, setOpen}) => {
             });
             // ? Agregamos el producto al carrito
             setCart(newCart);
-            return;
         }else{
             // ? Agregamos el producto al carrito
             setCart( cart => [...cart, productFinal] );
@@ -66,6 +62,7 @@ export const ProductsModal = ({open, setOpen}) => {
         handleNotification('Producto agregado', 'Agregaste correctamente tu producto al carrito.', 'success', 10000);
 
         // ? Agregamos el producto al carrito
+        setQuery('');
         queryRef.current.focus();
         setAmount(1);
     };

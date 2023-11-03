@@ -33,7 +33,7 @@ export const Notification = ({ title, message, type, toastAction }) => {
     };
 
     return (
-        <div className="relative top-16 right-6 py-4 px-6 bg-white border rounded-md shadow-lg">
+        <div className="py-4 px-6 bg-white border rounded-md shadow-lg">
             <div className="flex items-start">
                 <div className="flex-shrink-0 ">
                     { attributes[type]['icon'] }

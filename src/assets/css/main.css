@@ -24,3 +24,11 @@ input[type=number] {
   -moz-appearance:textfield;
   appearance: textfield;
 }
+
+[data-sonner-toaster][data-y-position=top] {
+  top: 6rem;
+}
+[data-sonner-toaster][data-x-position=right] {
+  /* right: 4.5rem; */
+  right: 2.5rem;
+}

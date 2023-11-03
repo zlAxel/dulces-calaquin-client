@@ -11,14 +11,26 @@ export const AppProvider = ({ children }) => {
 
     const [alerts, setAlerts] = useState([]);
     const [toggleModal, setToggleModal] = useState(false);
-    const [user, setUser] = useState({});                    // * Estado para almacenar los datos del usuario
     const [products, setProducts] = useState([]);            // * Estado para almacenar los productos
-    const [cart, setCart] = useState([]);                    // * Estado para almacenar los productos del carrito
+    
+    const [user, setUser] = useState( JSON.parse(localStorage.getItem('user')) || {} ); // * Estado para almacenar el usuario
+    const [cart, setCart] = useState( JSON.parse(localStorage.getItem('cart')) || [] ); // * Estado para almacenar el carrito
 
-    // ? Obtenemos los productos de la API
     useEffect(() => {
+        // ? Obtenemos los productos de la API
         getProducts().then( data => setProducts( data ) );
     }, []);
+
+    useEffect(() => {
+        // ? Almacenamos el carrito en el localStorage
+        localStorage.setItem('cart', JSON.stringify(cart));
+    }, [cart])
+
+    useEffect(() => {
+        // ? Almacenamos al usuario en el localStorage
+        localStorage.setItem('user', JSON.stringify(user));
+    }, [user])
+    
     
     // ? Creamos función para mostrar notificaciones
     const handleNotification = (title, message, type, time) => {
