@@ -109,7 +109,7 @@ export const ProductsModal = ({open, setOpen}) => {
                                 onChange={ (event) => setQuery(event.target.value) }
                                 ref={queryRef}
                             />
-                            <div className='absolute right-6 top-3'>
+                            <button type='button' onClick={ () => setOpen(false) } className='absolute right-6 top-3 cursor-pointer'>
                                 <span className="inline-flex items-center gap-x-2">
                                     <svg className="h-2 w-2 fill-primary-200" viewBox="0 0 6 6" aria-hidden="true">
                                         <circle cx={3} cy={3} r={3} />
@@ -117,11 +117,11 @@ export const ProductsModal = ({open, setOpen}) => {
                                     <svg className="h-2 w-2 fill-primary-400" viewBox="0 0 6 6" aria-hidden="true">
                                         <circle cx={3} cy={3} r={3} />
                                     </svg>
-                                    <svg className="h-2 w-2 fill-primary-600 cursor-pointer" onClick={ () => setOpen(false) } viewBox="0 0 6 6" aria-hidden="true">
+                                    <svg className="h-2 w-2 fill-primary-600" viewBox="0 0 6 6" aria-hidden="true">
                                         <circle cx={3} cy={3} r={3} />
                                     </svg>
                                 </span>
-                            </div>
+                            </button>
                         </div>
 
                         {(query === '' || filteredProducts.length > 0) && (
@@ -182,7 +182,7 @@ export const ProductsModal = ({open, setOpen}) => {
                                 <div className="flex-none p-6 text-center">
                                 <img src={activeOption.imageUrl} alt="" className="mx-auto h-16 w-16 rounded-full" />
                                 <h2 className="mt-3 font-semibold text-gray-900">{activeOption.name}</h2>
-                                <p className="text-sm leading-6 text-gray-500">{activeOption.price}</p>
+                                <p className="text-sm leading-6 text-gray-500">${activeOption.price}</p>
                                 </div>
                                 <div className="flex flex-auto flex-col p-6">
                                 <dl className="grid grid-cols-1 gap-x-6 gap-y-2 text-sm text-gray-700">

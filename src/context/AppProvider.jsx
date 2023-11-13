@@ -11,7 +11,8 @@ export const AppProvider = ({ children }) => {
 
     const [alerts, setAlerts] = useState([]);
     const [toggleModal, setToggleModal] = useState(false);
-    const [products, setProducts] = useState([]);            // * Estado para almacenar los productos
+    const [toggleProductsModal, setToggleProductsModal] = useState(false);  // * Estado para mostrar/ocultar el modal de productos
+    const [products, setProducts] = useState([]);                           // * Estado para almacenar los productos
     
     const [user, setUser] = useState( JSON.parse(localStorage.getItem('user')) || {} ); // * Estado para almacenar el usuario
     const [cart, setCart] = useState( JSON.parse(localStorage.getItem('cart')) || [] ); // * Estado para almacenar el carrito
@@ -30,7 +31,24 @@ export const AppProvider = ({ children }) => {
         // ? Almacenamos al usuario en el localStorage
         localStorage.setItem('user', JSON.stringify(user));
     }, [user])
-    
+
+
+    // ? Creamos función para modificar las piezas de un producto
+    const handleProductAmount = (id, amount) => {
+        const newCart = cart.map( product => {
+            if (product.id == id) {
+                product.amount = amount;
+            }
+            return product;
+        });
+        setCart( newCart );
+    };
+
+    // ? Creamos función para eliminar un producto del carrito
+    const handleDeleteProduct = (id) => {
+        const newCart = cart.filter( product => product.id != id );
+        setCart( newCart );
+    };
     
     // ? Creamos función para mostrar notificaciones
     const handleNotification = (title, message, type, time) => {
@@ -51,9 +69,10 @@ export const AppProvider = ({ children }) => {
             user, setUser,
             alerts, setAlerts,
             toggleModal, setToggleModal,
+            toggleProductsModal, setToggleProductsModal,
             cart, setCart,
             products,
-            handleNotification,
+            handleNotification, handleProductAmount, handleDeleteProduct
             }}>
             { children }
         </AppContext.Provider>

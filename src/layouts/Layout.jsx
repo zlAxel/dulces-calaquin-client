@@ -7,7 +7,7 @@ import { SideMenu } from "../components/layout/SideMenu";
 import { Gradients } from "../components/layout/Gradients";
 import { Navbar } from "../components/layout/Navbar";
 import { Toaster } from "sonner";
-import { Cart } from "../components/layout/Cart";
+import { ShoppingCart } from "../components/layout/ShoppingCart";
 
 
 export const Layout = () => {
@@ -30,7 +30,7 @@ export const Layout = () => {
                     sidebarOpen={sidebarOpen}
                     setSidebarOpen={setSidebarOpen}
                 />
-                <Cart
+                <ShoppingCart
                     cartOpen={cartOpen}
                     setCartOpen={setCartOpen}
                 />
