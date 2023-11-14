@@ -25,6 +25,12 @@ export const ProductsModal = ({open, setOpen}) => {
     //     setRecent([]);
     // }, [products])
     
+    useEffect(() => {
+        if ( ! open ) return;
+        setTimeout(() => {
+            queryRef.current.focus();
+        }, 400);
+    }, [open])
 
     const filteredProducts =
         query === ''

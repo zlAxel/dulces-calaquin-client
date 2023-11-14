@@ -80,6 +80,10 @@ export const LoginPunto = () => {
         if( userExists ){
             setUserFind( userExists.data );
             setAlerts([]);
+
+            setTimeout(() => {
+                pinRef.current.focus(); // * Enfocamos el input del pin
+            }, 100);
         }
         // ? Si el usuario no existe, mostramos el modal para crear una cuenta
         if( userExists && userExists.data === false )

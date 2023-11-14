@@ -4,6 +4,7 @@ import { Notification } from "../components/Notification";
 
 import { createContext, useEffect, useState } from "react";
 import { getProducts } from "../data/products";
+import { storePurchase } from "../data/purchases";
 
 export const AppContext = createContext();
 
@@ -18,8 +19,7 @@ export const AppProvider = ({ children }) => {
     const [cart, setCart] = useState( JSON.parse(localStorage.getItem('cart')) || [] ); // * Estado para almacenar el carrito
 
     useEffect(() => {
-        // ? Obtenemos los productos de la API
-        getProducts().then( data => setProducts( data ) );
+        
     }, []);
 
     useEffect(() => {
@@ -30,6 +30,11 @@ export const AppProvider = ({ children }) => {
     useEffect(() => {
         // ? Almacenamos al usuario en el localStorage
         localStorage.setItem('user', JSON.stringify(user));
+
+        // ? Obtenemos los productos de la API si el usuario existe
+        if ( Object.keys(user).length > 0 ) {
+            getProducts().then( data => setProducts( data ) );
+        }
     }, [user])
 
 
@@ -48,6 +53,19 @@ export const AppProvider = ({ children }) => {
     const handleDeleteProduct = (id) => {
         const newCart = cart.filter( product => product.id != id );
         setCart( newCart );
+    };
+
+    // ? Creamos función para crear la compra del usuario
+    const handleCreatePurchase = ( status, cart ) => {
+        // ? Creamos un arreglo de los productos, dejando solo el id y la cantidad
+        const products = cart.map( product => ({ id: product.id, amount: product.amount }) );
+
+        // ? Llamamos a la API para crear la compra
+        const response = storePurchase(status, products).then( data => {
+            return data;
+        });
+
+        return response;
     };
     
     // ? Creamos función para mostrar notificaciones
@@ -72,7 +90,7 @@ export const AppProvider = ({ children }) => {
             toggleProductsModal, setToggleProductsModal,
             cart, setCart,
             products,
-            handleNotification, handleProductAmount, handleDeleteProduct
+            handleNotification, handleProductAmount, handleDeleteProduct, handleCreatePurchase, 
             }}>
             { children }
         </AppContext.Provider>
