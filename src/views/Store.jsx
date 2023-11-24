@@ -1,11 +1,16 @@
+
+import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { FireIcon } from "@heroicons/react/20/solid"
+import { TopProducts } from "../components/layout/TopProducts";
 import { ProductsModal } from "../components/ProductsModal"
 import { ButtonApp } from "../components/utility/ButtonApp"
 import { useApp } from "../hooks/useApp";
 
 export const Store = () => {
 
-    const { toggleProductsModal, setToggleProductsModal } = useApp();
+    const { toggleProductsModal, setToggleProductsModal, products } = useApp();
+
+    const [ animationProducts ] = useAutoAnimate(); // * Animación de los productos
 
     return (
         <div className="flex flex-col w-full justify-center items-center gap-6 my-10">
@@ -24,6 +29,12 @@ export const Store = () => {
                 open={toggleProductsModal}
                 setOpen={setToggleProductsModal}
             />
+
+            <div ref={ animationProducts } classNamew-full>
+                { products.length > 0 && (
+                    <TopProducts />
+                )}
+            </div>
         </div>
     )
 }

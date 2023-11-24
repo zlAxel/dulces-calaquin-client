@@ -6,15 +6,15 @@ export const ButtonApp = ({ content, type, appearance, isLoading, className, ico
     const disabledStyles = (disabled || isLoading) ? "opacity-80 !cursor-not-allowed ring-offset-0" : "active:scale-95";
 
     const appearances = {
-        primary: "text-white bg-primary-600 ring-primary-300 ring-offset-primary-200 hover:ring-offset-primary-500",
-        secondary: "text-primary-600 hover:text-primary-500 bg-transparent outline-none border-0 ring-offset-0 ring-0 ring-offset-white !ring-offset-0 !shadow-none",
+        primary: "text-white bg-primary-600 ring-primary-300 ring-offset-primary-200 hover:ring-offset-primary-500 ring-1",
+        secondary: "text-primary-600 hover:text-primary-500 bg-transparent outline-none border-0 ring-offset-0 ring-0 ring-offset-white !ring-offset-0 !shadow-transparent",
     };
 
     return (
         <button
             type={ type }
             className={ `
-                box-border relative z-30 inline-flex items-center justify-center w-auto px-8 py-3 overflow-hidden font-bold transition-all duration-300 rounded-md cursor-pointer group ring-offset-2 ring-1 ease focus:outline-none shadow-xl
+                box-border relative z-30 inline-flex items-center justify-center w-auto px-8 py-3 overflow-hidden font-bold transition-all duration-300 rounded-md cursor-pointer group ring-offset-2 ease focus:outline-none shadow-xl
                 ${appearances[appearance]} ${ disabledStyles } ${ className }
             ` }
             disabled={ disabled || isLoading }

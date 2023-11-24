@@ -14,16 +14,15 @@ function classNames(...classes) {
 
 export const ProductsModal = ({open, setOpen}) => {
     const [query, setQuery] = useState('');
-    const [recent, setRecent] = useState([]);
     const [amount, setAmount] = useState(1);
     const queryRef = useRef(null);
-    const { products, handleNotification, cart, setCart } = useApp();
+    const { products, recentPurchases, handleAddToCart, recentProducts, setRecentProducts } = useApp();
 
-    // useEffect(() => {
-    //     if ( Object.values(products).length === 0 ) return;
-    //     // setRecent([products[0], products[1]]);
-    //     setRecent([]);
-    // }, [products])
+    // ? Asignamos los productos recientes
+    useEffect(() => {
+        if ( Object.values(recentPurchases).length === 0 ) return;
+        setRecentProducts(recentPurchases); 
+    }, [recentPurchases]);
     
     useEffect(() => {
         if ( ! open ) return;
@@ -39,33 +38,9 @@ export const ProductsModal = ({open, setOpen}) => {
             return product.name.toLowerCase().includes(query.toLowerCase())
         });
 
-    const handleAddToCart = (productActive) => {
-        // ? Creamos el objeto con la cantidad
-        const productFinal = { ...productActive, amount };
-
-        // ? Antes de agregar el producto a la lista de recientes, verificamos que no esté ya en la lista
-        const isRecent = recent.find( product => product.id === productFinal.id );
-        if ( ! isRecent ) setRecent([productFinal, ...recent]);
-
-        // ? Antes de agregar el producto al carrito, verificamos que no esté ya en el carrito, si está, sumamos la cantidad
-        const isCart = cart.find( product => product.id === productFinal.id );
-        if ( isCart ) {
-            const newCart = cart.map( product => {
-                if ( product.id === productFinal.id ) {
-                    product.amount += productFinal.amount;
-                    return product;
-                }
-                return product;
-            });
-            // ? Agregamos el producto al carrito
-            setCart(newCart);
-        }else{
-            // ? Agregamos el producto al carrito
-            setCart( cart => [...cart, productFinal] );
-        }
-
-        // ? Mostramos notificación
-        handleNotification('Producto agregado', 'Agregaste correctamente tu producto al carrito.', 'success', 10000);
+    const handleAddProduct = (productActive) => {
+        // ? Agregamos el producto al carrito
+        handleAddToCart(productActive, amount);
 
         // ? Agregamos el producto al carrito
         setQuery('');
@@ -100,7 +75,7 @@ export const ProductsModal = ({open, setOpen}) => {
                 >
                 <Dialog.Panel className="mx-auto h-fit max-w-3xl transform divide-y divide-gray-100 overflow-hidden rounded-xl bg-white shadow-2xl ring-1 ring-black ring-opacity-5 transition-all">
                 <Combobox>
-                    {({ activeOption }) => (
+                    { ({ activeOption }) => (
                     <>
                         <div className="relative">
                             <MagnifyingGlassIcon
@@ -138,25 +113,25 @@ export const ProductsModal = ({open, setOpen}) => {
                                     activeOption && 'sm:h-96'
                                 )}
                                 >
-                                {(query === '' && Object.values(recent).length > 0) && (
+                                {(query === '' && Object.values(recentProducts).length > 0) && (
                                     <h2 className="mb-4 mt-2 text-xs font-semibold text-primary-800">Comprados recientemente</h2>
                                 )}
                                 <div className="-mx-2 text-sm text-gray-700">
-                                    {(query === '' ? recent : filteredProducts).map((product) => (
+                                    {(query === '' ? recentProducts : filteredProducts).map((product) => (
                                         <Combobox.Option
                                             as="div"
                                             key={product.id}
                                             value={product}
                                             className={({ active }) =>
                                             classNames(
-                                                'flex cursor-default select-none items-center rounded-md p-2',
+                                                'flex cursor-default select-none items-center rounded-md p-2 pointer-events-auto',
                                                 active && 'bg-gray-100 text-gray-900'
                                             )
                                             }
                                         >
                                             {({ active }) => (
                                             <>
-                                                <img src={product.imageUrl} alt="" className="h-6 w-6 flex-none rounded-full" />
+                                                <img src={product.image} alt="" className="h-6 w-6 flex-none rounded-full" />
                                                 <span className="ml-3 flex-auto truncate">{product.name}</span>
                                                 {active && (
                                                 <ChevronRightIcon
@@ -168,7 +143,7 @@ export const ProductsModal = ({open, setOpen}) => {
                                             )}
                                         </Combobox.Option>
                                     ))}
-                                    {(query === '' && Object.values(recent).length === 0) && (
+                                    {(query === '' && Object.values(recentProducts).length === 0) && (
                                         <div className="px-6 py-14 text-center text-sm sm:px-14">
                                             <SparklesIcon className="mx-auto h-7 w-7 text-primary-500" aria-hidden="true" />
                                             <p className="mt-4 font-semibold text-gray-900">Comienza a buscar</p>
@@ -186,7 +161,7 @@ export const ProductsModal = ({open, setOpen}) => {
                             {activeOption && (
                             <div className="hidden w-1/2 flex-none flex-col divide-y divide-gray-100 overflow-y-auto sm:flex">
                                 <div className="flex-none p-6 text-center">
-                                <img src={activeOption.imageUrl} alt="" className="mx-auto h-16 w-16 rounded-full" />
+                                <img src={activeOption.image} alt="" className="mx-auto h-16 w-16 rounded-full" />
                                 <h2 className="mt-3 font-semibold text-gray-900">{activeOption.name}</h2>
                                 <p className="text-sm leading-6 text-gray-500">${activeOption.price}</p>
                                 </div>
@@ -221,7 +196,7 @@ export const ProductsModal = ({open, setOpen}) => {
                                     appearance="primary"
                                     icon={ <ShoppingCartIcon className="relative w-5 h-5 mr-2" /> }
                                     className="mt-10"
-                                    onClick={ () => handleAddToCart( activeOption ) }
+                                    onClick={ () => handleAddProduct( activeOption ) }
                                 />
                                 </div>
                             </div>

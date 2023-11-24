@@ -33,7 +33,7 @@ export const CartItem = ({ product }) => {
         <li key={product.id} className="flex py-3 hover:bg-gray-50 transition-colors">
             <div className="h-24 w-24 flex-shrink-0 overflow-hidden ">
                 <img
-                    src={product.imageUrl}
+                    src={product.image}
                     alt={`Imagen de ${product.name}`}
                     className="h-full w-full object-cover object-center"
                 />
