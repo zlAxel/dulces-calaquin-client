@@ -24,7 +24,8 @@ ReactDOM.createRoot(document.getElementById('root')).render(
 				</AuthProvider>
 			</AppProvider>
 		</BrowserRouter>
-	</React.StrictMode>,
+	</React.StrictMode>
+	,
 )
 
 document.title = siteTitle; // Establece el título del documento

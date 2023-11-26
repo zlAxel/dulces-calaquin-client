@@ -24,7 +24,7 @@ export const Layout = () => {
         <>
             <div className="relative isolate">
                 {/* // TODO | Sombras gradientes */}
-                <Gradients />
+                {/* <Gradients /> */}
                 {/* // TODO | Menú lateral */}
                 <SideMenu 
                     sidebarOpen={sidebarOpen}

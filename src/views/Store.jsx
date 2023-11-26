@@ -8,7 +8,7 @@ import { useApp } from "../hooks/useApp";
 
 export const Store = () => {
 
-    const { toggleProductsModal, setToggleProductsModal, products } = useApp();
+    const { toggleProductsModal, setToggleProductsModal, topProducts } = useApp();
 
     const [ animationProducts ] = useAutoAnimate(); // * Animación de los productos
 
@@ -31,7 +31,7 @@ export const Store = () => {
             />
 
             <div ref={ animationProducts } classNamew-full>
-                { products.length > 0 && (
+                { topProducts.length > 0 && (
                     <TopProducts />
                 )}
             </div>

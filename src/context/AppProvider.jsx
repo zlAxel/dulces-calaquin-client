@@ -3,7 +3,7 @@ import { toast } from "sonner";
 import { Notification } from "../components/Notification";
 
 import { createContext, useEffect, useState } from "react";
-import { getProducts } from "../data/products";
+import { getProducts, getTopProducts } from "../data/products";
 import { storePurchase, getRecentPurchases } from "../data/purchases";
 
 export const AppContext = createContext();
@@ -14,6 +14,7 @@ export const AppProvider = ({ children }) => {
     const [toggleModal, setToggleModal] = useState(false);
     const [toggleProductsModal, setToggleProductsModal] = useState(false);  // * Estado para mostrar/ocultar el modal de productos
     const [products, setProducts] = useState([]);                           // * Estado para almacenar los productos
+    const [topProducts, setTopProducts] = useState([]);                     // * Estado para almacenar los productos más vendidos
     const [recentPurchases, setRecentPurchases] = useState([]);             // * Estado para almacenar las compras recientes 
     const [recentProducts, setRecentProducts] = useState([]);               // * Estado para almacenar los productos recientes
     
@@ -21,9 +22,10 @@ export const AppProvider = ({ children }) => {
     const [cart, setCart] = useState( JSON.parse(localStorage.getItem('cart')) || [] ); // * Estado para almacenar el carrito
 
     useEffect(() => {
+        if(Object.keys(user).length === 0) return;
         // ? Almacenamos el carrito en el localStorage
         localStorage.setItem('cart', JSON.stringify(cart));
-
+        
         // ? Validamos los productos del carrito
         validateProducts();
     }, [cart])
@@ -31,12 +33,15 @@ export const AppProvider = ({ children }) => {
     useEffect(() => {
         // ? Almacenamos al usuario en el localStorage
         localStorage.setItem('user', JSON.stringify(user));
-
+        
         // ? Obtenemos los productos de la API si el usuario existe
         if ( Object.keys(user).length > 0 ) {
+            getTopProducts().then( data => { 
+                setTopProducts( data ); // Almacenamos los productos más vendidos en el estado
+                validateProducts();     // Validamos los productos del carrito
+            });            // * Obtenemos los productos más vendidos de la API
             getProducts().then( data => {
                 setProducts( data );   // Almacenamos los productos en el estado
-                validateProducts();    // Validamos los productos del carrito
             });
             getRecentPurchases().then( data => setRecentPurchases( data ) );    // * Obtenemos las compras recientes de la API
         }
@@ -122,7 +127,7 @@ export const AppProvider = ({ children }) => {
      * Crearemos un nuevo array con los productos del carrito
     */ 
     function validateProducts() {
-        setProducts(prevProducts => {
+        setTopProducts(prevProducts => {
             const newProducts = prevProducts.map(product => {
                 const isCart = cart.find(cartProduct => cartProduct.id === product.id);
                 if (isCart) {
@@ -145,7 +150,7 @@ export const AppProvider = ({ children }) => {
             toggleModal, setToggleModal,
             toggleProductsModal, setToggleProductsModal,
             cart, setCart,
-            products, setProducts,
+            products, setProducts, topProducts,
             recentPurchases, 
             recentProducts, setRecentProducts,
             handleNotification, handleProductAmount, handleDeleteProduct, handleCreatePurchase, handleAddToCart,
