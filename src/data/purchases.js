@@ -13,3 +13,13 @@ export async function storePurchase( status, products ) {
         console.log( error );
     }
 };
+
+export async function getRecentPurchases() {
+    try {
+        const { data } = await axiosInstance.get("/api/recent-purchases");
+        
+        return data.purchases;
+    } catch (error) {
+        console.log( error );
+    }
+};

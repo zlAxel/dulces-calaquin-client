@@ -24,7 +24,7 @@ export const Layout = () => {
         <>
             <div className="relative isolate">
                 {/* // TODO | Sombras gradientes */}
-                <Gradients />
+                {/* <Gradients /> */}
                 {/* // TODO | Menú lateral */}
                 <SideMenu 
                     sidebarOpen={sidebarOpen}
@@ -39,7 +39,7 @@ export const Layout = () => {
                 <div className="h-3 lg:h-full lg:w-8 lg:fixed lg:inset-y-0 lg:left-0 lg:z-50 lg:block lg:overflow-y-auto bg-gray-900 lg:pb-4" />
                 <div className="h-3 lg:h-full lg:w-8 lg:fixed lg:inset-y-0 lg:right-0 lg:z-50 lg:block lg:overflow-y-auto bg-gray-900 lg:pb-4" />
 
-                <div className="lg:px-8">
+                <div className="lg:pl-8">
                     {/* // TODO | Menú superior */}
                     <Navbar
                         setSidebarOpen={setSidebarOpen}
@@ -57,7 +57,7 @@ export const Layout = () => {
                 </div>
                 {/* // TODO | Toasts */}
                 <Toaster
-                    expand={true}
+                    expand={false}
                     position="top-right" 
                     toastOptions={{
                         className: 'w-96',
