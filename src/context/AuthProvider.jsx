@@ -18,6 +18,7 @@ export const AuthProvider = ({ children }) => {
     const [subtitle, setSubtitle] = useState(''); // * Creamos el state para el subtítulo de la página
     const [loginType, setLoginType] = useState( window.localStorage.getItem('login_type') || 'login'); // * Creamos el state para saber a donde redireccionar
     const secretPass = import.meta.env.VITE_SECRET_PASS;
+    const userLocal  = JSON.parse( window.localStorage.getItem("user") ) || {}; // * Obtenemos el usuario del localStorage
 
     // TODO | Creamos la función para iniciar sesión
     const login = async ( datos ) => {
@@ -30,9 +31,13 @@ export const AuthProvider = ({ children }) => {
             
             await csrf();
             await axiosInstance.post("/login", datos)
-                .then( () => {
+                .then( data => {
                     window.localStorage.setItem("login_type", "login");
-                    navigate("/");
+                    if( data.data ){
+                        navigate("/admin");
+                    }else{
+                        navigate("/");
+                    }
                 });
 
         } catch (error) {
@@ -66,6 +71,12 @@ export const AuthProvider = ({ children }) => {
         try {
             await axiosInstance.post("/logout")
                 .then( () => {
+                    // ? Vaciamos el state del usuario
+                    setUser({});
+                    // ? Vaciamos el localStorage
+                    window.localStorage.removeItem("user");
+
+                    // ? Redireccionamos a la página de inicio
                     if ( loginType === "login" )
                         navigate("/auth/login");
                     else
@@ -102,10 +113,18 @@ export const AuthProvider = ({ children }) => {
 
     // TODO | Validamos si la sesión está activa
     const check = async ( from ) => {
-        axiosInstance("/api/user")
+        // ? Seteamos al usuario en el state
+        if( Object.keys(userLocal).length > 0 ){
+            setUser( userLocal );
+        }
+
+        // ? Obtenemos los datos del usuario
+        await axiosInstance("/api/users")
         .then( user => {
-            // ? Guardamos al usuario en el state
-            setUser( user.data );
+            // ? Validamos si "user.data" es identico a "userLocal", si no lo es, entonces guardamos los datos del usuario en el state
+            if ( JSON.stringify(user.data) !== JSON.stringify(userLocal) ){
+                setUser( user.data );
+            }
 
             if ( from === "Auth" )
                 navigate("/"); 

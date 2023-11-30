@@ -30,7 +30,7 @@ export const Store = () => {
                 setOpen={setToggleProductsModal}
             />
 
-            <div ref={ animationProducts } classNamew-full>
+            <div ref={ animationProducts } className="w-full">
                 { topProducts.length > 0 && (
                     <TopProducts />
                 )}

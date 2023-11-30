@@ -4,6 +4,7 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import { Layout } from "./layouts/Layout";
 import { LayoutAuth } from "./layouts/LayoutAuth";
+import PrivateRoute from "./layouts/PrivateRoute";
 
 // ! Importaciones de Vistas
 
@@ -13,15 +14,26 @@ import { Register } from "./views/Auth/Register";
 import { Store } from "./views/Store";
 
 function App() {
+    const Hola = () => <span>Hola</span>;
     return (
         <Routes>
-
             {/**
              * // ! Rutas de la Aplicación
             */}
             <Route path="/" element={ <Layout /> } exact>
                 <Route index element={ <Store /> } />
             </Route>
+            {/**
+             * // ! Rutas del administrador
+            */}
+            <Route path="/admin" element={ <Layout /> } exact>
+                {/* // ! Utilizamos PrivateRoute para proteger la ruta */}
+                <Route
+                    index
+                    element={<PrivateRoute element={<Hola />} adminOnly redirect="/" />}
+                />
+            </Route>
+
 
             {/**
              * // ! Rutas de Autenticación 

@@ -5,6 +5,7 @@ import { Notification } from "../components/Notification";
 import { createContext, useEffect, useState } from "react";
 import { getProducts, getTopProducts } from "../data/products";
 import { storePurchase, getRecentPurchases } from "../data/purchases";
+import { useLocation } from "react-router-dom";
 
 export const AppContext = createContext();
 
@@ -18,32 +19,37 @@ export const AppProvider = ({ children }) => {
     const [recentPurchases, setRecentPurchases] = useState([]);             // * Estado para almacenar las compras recientes 
     const [recentProducts, setRecentProducts] = useState([]);               // * Estado para almacenar los productos recientes
     
-    const [user, setUser] = useState( JSON.parse(localStorage.getItem('user')) || {} ); // * Estado para almacenar el usuario
+    const [user, setUser] = useState( {} ); // * Estado para almacenar el usuario
     const [cart, setCart] = useState( JSON.parse(localStorage.getItem('cart')) || [] ); // * Estado para almacenar el carrito
 
+    const currentLocation = useLocation();
+
     useEffect(() => {
-        if(Object.keys(user).length === 0) return;
-        // ? Almacenamos el carrito en el localStorage
-        localStorage.setItem('cart', JSON.stringify(cart));
-        
-        // ? Validamos los productos del carrito
-        validateProducts();
+        if(Object.keys(user).length > 0){
+            // ? Almacenamos el carrito en el localStorage
+            localStorage.setItem('cart', JSON.stringify(cart));
+            
+            // ? Validamos los productos del carrito
+            validateProducts();
+        }
     }, [cart])
 
     useEffect(() => {
-        // ? Almacenamos al usuario en el localStorage
-        localStorage.setItem('user', JSON.stringify(user));
-        
         // ? Obtenemos los productos de la API si el usuario existe
         if ( Object.keys(user).length > 0 ) {
-            getTopProducts().then( data => { 
-                setTopProducts( data ); // Almacenamos los productos más vendidos en el estado
-                validateProducts();     // Validamos los productos del carrito
-            });            // * Obtenemos los productos más vendidos de la API
-            getProducts().then( data => {
-                setProducts( data );   // Almacenamos los productos en el estado
-            });
-            getRecentPurchases().then( data => setRecentPurchases( data ) );    // * Obtenemos las compras recientes de la API
+            // ? Almacenamos al usuario en el localStorage
+            localStorage.setItem('user', JSON.stringify(user));
+
+            if( currentLocation.pathname === "/" ){
+                getTopProducts().then( data => { 
+                    setTopProducts( data ); // Almacenamos los productos más vendidos en el estado
+                    validateProducts();     // Validamos los productos del carrito
+                });            // * Obtenemos los productos más vendidos de la API
+                getProducts().then( data => {
+                    setProducts( data );   // Almacenamos los productos en el estado
+                });
+                getRecentPurchases().then( data => setRecentPurchases( data ) );    // * Obtenemos las compras recientes de la API
+            }
         }
     }, [user])
 
