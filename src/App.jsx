@@ -28,10 +28,8 @@ function App() {
             */}
             <Route path="/admin" element={ <Layout /> } exact>
                 {/* // ! Utilizamos PrivateRoute para proteger la ruta */}
-                <Route
-                    index
-                    element={<PrivateRoute element={<Hola />} adminOnly redirect="/" />}
-                />
+                <Route path="inicio" element={<PrivateRoute element={<Hola />} adminOnly redirect="/" />} />
+                <Route path="products" element={<PrivateRoute element={<Hola />} adminOnly redirect="/" />} />
             </Route>
 
 

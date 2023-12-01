@@ -21,7 +21,7 @@ function classNames(...classes) {
 export const Navbar = ({ setSidebarOpen, setCartOpen }) => {
 
     const { logout } = useAuth(); // * Obtenemos el hook para cerrar sesión
-    const { user, cart }   = useApp(); // * Obtenemos el hook para cerrar sesión
+    const { user, cart, userAdmin }   = useApp(); // * Obtenemos el hook para cerrar sesión
 
     const userNavigation = [
         // { name: 'Your profile', url: '#' },
@@ -42,10 +42,12 @@ export const Navbar = ({ setSidebarOpen, setCartOpen }) => {
 
             <div className="flex flex-1 gap-x-4 items-center self-stretch lg:gap-x-6">
                 <div className="relative flex flex-1">
-                    <button onClick={() => setSidebarOpen(true)} type="button" className="-m-2.5 p-2.5 text-gray-700">
-                        <span className="sr-only">Abrir menú</span>
-                        <Bars3Icon className="h-6 w-6" aria-hidden="true" />
-                    </button>
+                    { userAdmin && (
+                        <button onClick={() => setSidebarOpen(true)} type="button" className="-m-2.5 p-2.5 text-gray-700">
+                            <span className="sr-only">Abrir menú</span>
+                            <Bars3Icon className="h-6 w-6" aria-hidden="true" />
+                        </button>
+                    )}
                 </div>
                 <div className="flex items-center gap-x-4 lg:gap-x-6">
                     {/* <button type="button" className="-m-2.5 p-2.5 text-gray-400 hover:text-gray-500">

@@ -1,17 +1,21 @@
 
 import { Fragment } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
-import navigation from '../../data/navigation';
+import Navigation from '../../data/navigation';
 import {
     XMarkIcon,
 } from '@heroicons/react/24/outline';
 import { Logo } from '../utility/Logo';
+import { NavLink } from 'react-router-dom';
 
 function classNames(...classes) {
     return classes.filter(Boolean).join(' ');
 }
 
 export const SideMenu = ({ sidebarOpen, setSidebarOpen }) => {
+
+    const navigation = Navigation();
+
     return (
         <Transition.Root show={sidebarOpen} as={Fragment}>
             <Dialog as="div" className="relative z-50" onClose={setSidebarOpen}>
@@ -39,18 +43,21 @@ export const SideMenu = ({ sidebarOpen, setSidebarOpen }) => {
                                     <ul role="list" className="-mx-2 flex-1 space-y-1">
                                         {navigation.map((item) => (
                                             <li key={item.name}>
-                                                <a
-                                                    href={item.href}
-                                                    className={classNames(
-                                                        item.current
-                                                        ? 'bg-gray-800 text-white'
-                                                        : 'text-gray-400 hover:text-white hover:bg-gray-800',
-                                                        'group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold'
-                                                    )}
+                                                <NavLink
+                                                    to={item.href}
+                                                    className={ ({isActive}) => {
+                                                        return classNames(
+                                                            isActive
+                                                            ? 'bg-gray-800 text-white'
+                                                            : 'text-gray-400 hover:text-white hover:bg-gray-800',
+                                                            'group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold'
+                                                        )
+                                                    }}
+                                                    onClick={() => setSidebarOpen(false)}
                                                     >
                                                     <item.icon className="h-6 w-6 shrink-0" aria-hidden="true" />
                                                     { item.name }
-                                                </a>
+                                                </NavLink>
                                             </li>
                                         ))}
                                     </ul>

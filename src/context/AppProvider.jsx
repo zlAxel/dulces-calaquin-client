@@ -6,6 +6,7 @@ import { createContext, useEffect, useState } from "react";
 import { getProducts, getTopProducts } from "../data/products";
 import { storePurchase, getRecentPurchases } from "../data/purchases";
 import { useLocation } from "react-router-dom";
+import { axiosInstance } from "../config/axios";
 
 export const AppContext = createContext();
 
@@ -18,11 +19,27 @@ export const AppProvider = ({ children }) => {
     const [topProducts, setTopProducts] = useState([]);                     // * Estado para almacenar los productos más vendidos
     const [recentPurchases, setRecentPurchases] = useState([]);             // * Estado para almacenar las compras recientes 
     const [recentProducts, setRecentProducts] = useState([]);               // * Estado para almacenar los productos recientes
+    const [userAdmin, setUserAdmin] = useState(null);                       // * Estado para almacenar el usuario administrador
     
     const [user, setUser] = useState( {} ); // * Estado para almacenar el usuario
     const [cart, setCart] = useState( JSON.parse(localStorage.getItem('cart')) || [] ); // * Estado para almacenar el carrito
 
     const currentLocation = useLocation();
+
+    useEffect(() => {
+        const getUserAdmin = async () => {
+            try {
+                const response = await axiosInstance("/api/user-admin");
+                
+                setUserAdmin(response.data.user);
+            } catch (error) {
+                console.log(error);
+                setUserAdmin(null);
+            }
+        }
+
+        getUserAdmin();
+    }, []);
 
     useEffect(() => {
         if(Object.keys(user).length > 0){
@@ -41,14 +58,22 @@ export const AppProvider = ({ children }) => {
             localStorage.setItem('user', JSON.stringify(user));
 
             if( currentLocation.pathname === "/" ){
-                getTopProducts().then( data => { 
-                    setTopProducts( data ); // Almacenamos los productos más vendidos en el estado
-                    validateProducts();     // Validamos los productos del carrito
-                });            // * Obtenemos los productos más vendidos de la API
-                getProducts().then( data => {
-                    setProducts( data );   // Almacenamos los productos en el estado
+                getTopProducts().then( data => {  // * Obtenemos los productos más vendidos de la API
+                    setTopProducts( data );
+                    validateProducts();           // Validamos los productos del carrito
+                }).catch( () => {
+                    setTopProducts( [] );
+                });                         
+                getProducts().then( data => {     // * Obtenemos los productos de la API
+                    setProducts( data );
+                }).catch( () => {
+                    setProducts( [] );
+                });                       
+                getRecentPurchases().then(  // * Obtenemos las compras recientes de la API
+                    data => setRecentPurchases( data ) )
+                .catch( () => {
+                    setRecentPurchases( [] );
                 });
-                getRecentPurchases().then( data => setRecentPurchases( data ) );    // * Obtenemos las compras recientes de la API
             }
         }
     }, [user])
@@ -159,6 +184,7 @@ export const AppProvider = ({ children }) => {
             products, setProducts, topProducts,
             recentPurchases, 
             recentProducts, setRecentProducts,
+            userAdmin, setUserAdmin,
             handleNotification, handleProductAmount, handleDeleteProduct, handleCreatePurchase, handleAddToCart,
             }}>
             { children }

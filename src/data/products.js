@@ -7,7 +7,7 @@ export async function getProducts() {
         
         return data.data;
     } catch (error) {
-        console.log( error );
+        throw error;
     }
 };
 
@@ -18,6 +18,6 @@ export async function getTopProducts() {
 
         return data.products;
     } catch (error) {
-        console.log( error );
+        throw error;
     }
 }

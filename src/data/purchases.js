@@ -20,6 +20,6 @@ export async function getRecentPurchases() {
         
         return data.purchases;
     } catch (error) {
-        console.log( error );
+        throw error;
     }
 };

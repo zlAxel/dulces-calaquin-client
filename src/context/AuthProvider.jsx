@@ -132,6 +132,8 @@ export const AuthProvider = ({ children }) => {
         .catch( () => {
             // ? Vaciamos el state del usuario
             setUser({});
+            // ? Vaciamos el localStorage
+            window.localStorage.removeItem("user");
 
             if ( from !== "Auth" ){
                 if ( loginType === "login" )

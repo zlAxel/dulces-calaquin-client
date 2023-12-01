@@ -1,26 +1,12 @@
 
-import { useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
-import { axiosInstance } from '../config/axios';
+import { useApp } from '../hooks/useApp';
 // import { getUserAdmin } from '../data/users';
 
 function PrivateRoute ({ element, adminOnly, redirect }) {
 
-    const [userAdmin, setUserAdmin] = useState(null);
-    useEffect(() => {
-        const getUserAdmin = async () => {
-            try {
-                const response = await axiosInstance("/api/user-admin");
-                
-                setUserAdmin(response.data.user);
-            } catch (error) {
-                console.log(error);
-            }
-        }
-
-        getUserAdmin();
-    }, []);
-
+    const { userAdmin } = useApp();
+    
     // ? Mostramos un mensaje de carga mientras se obtiene el usuario
     if (userAdmin === null) {
         return <div>Cargando...</div>;
