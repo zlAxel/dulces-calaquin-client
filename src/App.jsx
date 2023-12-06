@@ -5,6 +5,7 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import { Layout } from "./layouts/Layout";
 import { LayoutAuth } from "./layouts/LayoutAuth";
 import PrivateRoute from "./layouts/PrivateRoute";
+import { ProductsView } from "./views/Admin/ProductsView";
 
 // ! Importaciones de Vistas
 
@@ -29,7 +30,7 @@ function App() {
             <Route path="/admin" element={ <Layout /> } exact>
                 {/* // ! Utilizamos PrivateRoute para proteger la ruta */}
                 <Route path="inicio" element={<PrivateRoute element={<Hola />} adminOnly redirect="/" />} />
-                <Route path="products" element={<PrivateRoute element={<Hola />} adminOnly redirect="/" />} />
+                <Route path="products" element={<PrivateRoute element={<ProductsView />} adminOnly redirect="/" />} />
             </Route>
 
 

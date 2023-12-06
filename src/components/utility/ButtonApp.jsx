@@ -10,12 +10,14 @@ export const ButtonApp = ({ content, type, appearance, isLoading, className, ico
         secondary: "text-primary-600 hover:text-primary-500 bg-transparent outline-none border-0 ring-offset-0 ring-0 ring-offset-white !ring-offset-0 !shadow-transparent",
     };
 
+    const iconClasses = ! content ? "!w-4 !px-4 !py-1" : "";
+
     return (
         <button
             type={ type }
             className={ `
                 box-border relative z-30 inline-flex items-center justify-center w-auto px-8 py-3 overflow-hidden font-bold transition-all duration-300 rounded-md cursor-pointer group ring-offset-2 ease focus:outline-none shadow-xl
-                ${appearances[appearance]} ${ disabledStyles } ${ className }
+                ${appearances[appearance]} ${ disabledStyles } ${ iconClasses } ${ className }
             ` }
             disabled={ disabled || isLoading }
             onClick={ onClick }

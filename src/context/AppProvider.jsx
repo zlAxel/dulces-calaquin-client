@@ -27,18 +27,7 @@ export const AppProvider = ({ children }) => {
     const currentLocation = useLocation();
 
     useEffect(() => {
-        const getUserAdmin = async () => {
-            try {
-                const response = await axiosInstance("/api/user-admin");
-                
-                setUserAdmin(response.data.user);
-            } catch (error) {
-                console.log(error);
-                setUserAdmin(null);
-            }
-        }
-
-        getUserAdmin();
+        getUserAdmin(); // ? Validamos si el usuario es administrador
     }, []);
 
     useEffect(() => {
@@ -64,17 +53,21 @@ export const AppProvider = ({ children }) => {
                 }).catch( () => {
                     setTopProducts( [] );
                 });                         
-                getProducts().then( data => {     // * Obtenemos los productos de la API
-                    setProducts( data );
-                }).catch( () => {
-                    setProducts( [] );
-                });                       
                 getRecentPurchases().then(  // * Obtenemos las compras recientes de la API
                     data => setRecentPurchases( data ) )
                 .catch( () => {
                     setRecentPurchases( [] );
                 });
             }
+            if( currentLocation.pathname === "/" || currentLocation.pathname === "/admin/products" ){
+                getProducts().then( data => {     // * Obtenemos los productos de la API
+                    setProducts( data );
+                }).catch( () => {
+                    setProducts( [] );
+                });  
+            }
+
+            getUserAdmin(); // ? Validamos si el usuario es administrador
         }
     }, [user])
 
@@ -151,6 +144,17 @@ export const AppProvider = ({ children }) => {
             duration: time,
         });
     };
+
+    // ? Creamos función para saber si el usuario es administrador
+    const getUserAdmin = async () => {
+        try {
+            const response = await axiosInstance("/api/user-admin");
+            
+            setUserAdmin(response.data.user);
+        } catch (error) {
+            setUserAdmin(null);
+        }
+    }
 
     /**
      * Validamos si los productos se encuentran en el carrito, 
