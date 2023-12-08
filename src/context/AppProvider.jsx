@@ -3,7 +3,7 @@ import { toast } from "sonner";
 import { Notification } from "../components/Notification";
 
 import { createContext, useEffect, useState } from "react";
-import { getProducts, getTopProducts } from "../data/products";
+import { getAllProducts, getProducts, getTopProducts } from "../data/products";
 import { storePurchase, getRecentPurchases } from "../data/purchases";
 import { useLocation } from "react-router-dom";
 import { axiosInstance } from "../config/axios";
@@ -16,6 +16,7 @@ export const AppProvider = ({ children }) => {
     const [toggleModal, setToggleModal] = useState(false);
     const [toggleProductsModal, setToggleProductsModal] = useState(false);  // * Estado para mostrar/ocultar el modal de productos
     const [products, setProducts] = useState([]);                           // * Estado para almacenar los productos
+    const [productsAll, setAllProducts] = useState([]);                     // * Estado para almacenar los todos los productos
     const [topProducts, setTopProducts] = useState([]);                     // * Estado para almacenar los productos más vendidos
     const [recentPurchases, setRecentPurchases] = useState([]);             // * Estado para almacenar las compras recientes 
     const [recentProducts, setRecentProducts] = useState([]);               // * Estado para almacenar los productos recientes
@@ -52,19 +53,24 @@ export const AppProvider = ({ children }) => {
                     validateProducts();           // Validamos los productos del carrito
                 }).catch( () => {
                     setTopProducts( [] );
-                });                         
+                });    
+                getProducts().then( data => {     // * Obtenemos los productos de la API
+                    setProducts( data );
+                }).catch( () => {
+                    setProducts( [] );
+                });                      
                 getRecentPurchases().then(  // * Obtenemos las compras recientes de la API
                     data => setRecentPurchases( data ) )
                 .catch( () => {
                     setRecentPurchases( [] );
                 });
             }
-            if( currentLocation.pathname === "/" || currentLocation.pathname === "/admin/products" ){
-                getProducts().then( data => {     // * Obtenemos los productos de la API
-                    setProducts( data );
+            if( currentLocation.pathname === "/admin/products" ){
+                getAllProducts().then( data => {     // * Obtenemos los productos de la API
+                    setAllProducts( data );
                 }).catch( () => {
-                    setProducts( [] );
-                });  
+                    setAllProducts( [] );
+                }); 
             }
 
             getUserAdmin(); // ? Validamos si el usuario es administrador
@@ -186,6 +192,7 @@ export const AppProvider = ({ children }) => {
             toggleProductsModal, setToggleProductsModal,
             cart, setCart,
             products, setProducts, topProducts,
+            productsAll, setAllProducts,
             recentPurchases, 
             recentProducts, setRecentProducts,
             userAdmin, setUserAdmin,
