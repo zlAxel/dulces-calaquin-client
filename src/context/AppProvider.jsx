@@ -21,6 +21,7 @@ export const AppProvider = ({ children }) => {
     const [recentPurchases, setRecentPurchases] = useState([]);             // * Estado para almacenar las compras recientes 
     const [recentProducts, setRecentProducts] = useState([]);               // * Estado para almacenar los productos recientes
     const [userAdmin, setUserAdmin] = useState(null);                       // * Estado para almacenar el usuario administrador
+    const [availableOptionProduct, setAvailableOptionProduct] = useState(null); // * Estado para almacenar la opción de disponibilidad de un producto
     
     const [user, setUser] = useState( {} ); // * Estado para almacenar el usuario
     const [cart, setCart] = useState( JSON.parse(localStorage.getItem('cart')) || [] ); // * Estado para almacenar el carrito
@@ -65,18 +66,18 @@ export const AppProvider = ({ children }) => {
                     setRecentPurchases( [] );
                 });
             }
-            if( currentLocation.pathname === "/admin/products" ){
-                getAllProducts().then( data => {     // * Obtenemos los productos de la API
-                    setAllProducts( data );
-                }).catch( () => {
-                    setAllProducts( [] );
-                }); 
-            }
 
             getUserAdmin(); // ? Validamos si el usuario es administrador
         }
-    }, [user])
+    }, [user]);
 
+    const handleGetAllProducts = () => {
+        getAllProducts().then( data => {     // * Obtenemos los productos de la API
+            setAllProducts( data );
+        }).catch( () => {
+            setAllProducts( [] );
+        }); 
+    };
 
     // ? Creamos función para modificar las piezas de un producto
     const handleProductAmount = (id, amount) => {
@@ -196,7 +197,9 @@ export const AppProvider = ({ children }) => {
             recentPurchases, 
             recentProducts, setRecentProducts,
             userAdmin, setUserAdmin,
+            availableOptionProduct, setAvailableOptionProduct,
             handleNotification, handleProductAmount, handleDeleteProduct, handleCreatePurchase, handleAddToCart,
+            handleGetAllProducts,
             }}>
             { children }
         </AppContext.Provider>

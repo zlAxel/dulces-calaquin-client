@@ -1,22 +1,29 @@
-import { useState } from 'react'
+import { useEffect } from 'react'
 import { RadioGroup } from '@headlessui/react'
 import { CheckCircleIcon } from '@heroicons/react/20/solid'
 import { EyeIcon } from '@heroicons/react/24/outline'
+import { useApp } from '../hooks/useApp'
 
 const mailingLists = [
-  { id: 1, title: 'Disponible' },
-  { id: 2, title: 'No disponible' },
+  { id: 1, description: 'Disponible', value: 1 },
+  { id: 2, description: 'No disponible', value: 0 },
 ]
 
 function classNames(...classes) {
-  return classes.filter(Boolean).join(' ')
+  return classes.filter(Boolean).join(' ');
 }
 
 export const ProductOptionAvailable = () => {
-    const [selectedMailingLists, setSelectedMailingLists] = useState(mailingLists[0])
+
+    const { availableOptionProduct, setAvailableOptionProduct } = useApp();
+
+    useEffect(() => {
+        setAvailableOptionProduct(mailingLists[0]);
+    }, []); // Seleccionamos el primer elemento por defecto
+    
 
     return (
-        <RadioGroup value={selectedMailingLists} onChange={setSelectedMailingLists}>
+        <RadioGroup value={availableOptionProduct} onChange={ setAvailableOptionProduct }>
             <RadioGroup.Label className="flex items-center gap-1 text-sm font-semibold leading-6 text-gray-900">
                 <EyeIcon className="h-4 w-4 text-primary-600" aria-hidden="true" />
                 Selecciona la disponibilidad del producto
@@ -39,7 +46,7 @@ export const ProductOptionAvailable = () => {
                             <span className="flex flex-1">
                                 <span className="flex flex-col">
                                     <RadioGroup.Label as="span" className="block text-xs font-medium text-gray-900 select-none">
-                                        {mailingList.title}
+                                        {mailingList.description}
                                     </RadioGroup.Label>
                                 </span>
                             </span>

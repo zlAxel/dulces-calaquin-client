@@ -1,5 +1,5 @@
 import { SquaresPlusIcon } from "@heroicons/react/24/outline";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ProductModal } from "../../components/ProductModal";
 import { ProductView } from "../../components/ProductView";
 import { ButtonApp } from "../../components/utility/ButtonApp";
@@ -9,7 +9,12 @@ export const ProductsView = () => {
 
     const [toggleModalProduct, setToggleModalProduct] = useState(false); // ? Estado para mostrar/ocultar el modal de productos
 
-    const { productsAll } = useApp(); // ? Obtenemos los productos del Provider
+    const { productsAll, handleGetAllProducts } = useApp(); // ? Obtenemos los productos del Provider
+
+    useEffect(() => {
+        handleGetAllProducts();
+    }, [])
+    
 
     return (
         <div className="mt-5 px-4 sm:px-6 lg:px-8">

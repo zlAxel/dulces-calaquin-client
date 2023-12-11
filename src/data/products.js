@@ -43,3 +43,14 @@ export async function updateProductAvailable(id, available) {
         throw error;
     }
 };
+
+// ? Función para guardar un producto
+export async function saveProduct(productData) {
+    try {
+        const { data } = await axiosInstance.post("/api/products", productData);
+
+        return data.message;
+    } catch (error) {
+        throw error;
+    }
+};

@@ -47,11 +47,11 @@ export const ProductView = ({product}) => {
             <td className="px-3 py-5 text-sm text-gray-500">
                 { product.available ? (
                     <button type="button" onClick={() => handleAlterAvailable(0)} className="inline-flex items-center rounded-md bg-emerald-50 px-2 py-1 text-xs font-medium text-emerald-700 ring-1 ring-inset ring-emerald-600/20">
-                        Activo { loading && <Spinner className="text-black mr-0 ml-2 !w-3 !h-3" /> }
+                        Activo { loading && <Spinner className="!text-black !mr-0 !ml-2 !w-3 !h-3" /> }
                     </button>
                 ) : (
                     <button type="button" onClick={() => handleAlterAvailable(1)} className="inline-flex items-center rounded-md bg-rose-50 px-2 py-1 text-xs font-medium text-rose-700 ring-1 ring-inset ring-rose-600/20">
-                        Inactivo { loading && <Spinner className="text-black mr-0 ml-2 !w-3 !h-3" /> }
+                        Inactivo { loading && <Spinner className="!text-black !mr-0 !ml-2 !w-3 !h-3" /> }
                     </button>
                 ) }
             </td>
@@ -62,16 +62,16 @@ export const ProductView = ({product}) => {
                         type="button"
                         appearance="secondary"
                         icon={ <ArrowPathIcon className="relative w-5 h-5" /> }
-                        onClick={ () => setToggleProductsModal(true) }
-                        className="[&>span>svg]:hover:animate-spin [&>span>svg]:hover:animate-once"
+                        // onClick={ () => setToggleProductsModal(true) }
+                        className="[&>p>svg]:hover:animate-spin [&>p>svg]:hover:animate-once"
                     />
                     <ButtonApp 
                         content=""
                         type="button"
                         appearance="secondary"
                         icon={ <TrashIcon className="relative w-5 h-5" /> }
-                        onClick={ () => setToggleProductsModal(true) }
-                        className="[&>span>svg]:hover:animate-wiggle-more"
+                        // onClick={ () => setToggleProductsModal(true) }
+                        className="[&>p>svg]:hover:animate-wiggle-more"
                     />
                 </div>
             </td>
