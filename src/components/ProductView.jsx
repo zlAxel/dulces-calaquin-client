@@ -10,10 +10,9 @@ import { useApp } from "../hooks/useApp";
 export const ProductView = ({product}) => {
 
     const [loading, setLoading] = useState(false); // Estado del loading
-    const { handleNotification } = useApp(); // * Función para mostrar notificaciones
+    const { handleNotification, setDeleteProductModal, setDeleteProductID, setUpdateProductID, setToggleModalProduct } = useApp(); // * Función para mostrar notificaciones
 
     const handleAlterAvailable = async (available) => {
-        
         setLoading(true); // Activamos el loading
 
         const data = await updateProductAvailable(product.id, available).catch(console.log);
@@ -62,7 +61,7 @@ export const ProductView = ({product}) => {
                         type="button"
                         appearance="secondary"
                         icon={ <ArrowPathIcon className="relative w-5 h-5" /> }
-                        // onClick={ () => setToggleProductsModal(true) }
+                        onClick={ () => { setToggleModalProduct(true); setUpdateProductID(product.id);} }
                         className="[&>p>svg]:hover:animate-spin [&>p>svg]:hover:animate-once"
                     />
                     <ButtonApp 
@@ -70,7 +69,7 @@ export const ProductView = ({product}) => {
                         type="button"
                         appearance="secondary"
                         icon={ <TrashIcon className="relative w-5 h-5" /> }
-                        // onClick={ () => setToggleProductsModal(true) }
+                        onClick={ () => { setDeleteProductModal(true); setDeleteProductID(product.id);} }
                         className="[&>p>svg]:hover:animate-wiggle-more"
                     />
                 </div>

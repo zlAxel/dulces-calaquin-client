@@ -3,11 +3,7 @@ import { RadioGroup } from '@headlessui/react'
 import { CheckCircleIcon } from '@heroicons/react/20/solid'
 import { EyeIcon } from '@heroicons/react/24/outline'
 import { useApp } from '../hooks/useApp'
-
-const mailingLists = [
-  { id: 1, description: 'Disponible', value: 1 },
-  { id: 2, description: 'No disponible', value: 0 },
-]
+import { mailingLists } from '../data'
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ');

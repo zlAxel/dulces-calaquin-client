@@ -3,7 +3,7 @@ import { toast } from "sonner";
 import { Notification } from "../components/Notification";
 
 import { createContext, useEffect, useState } from "react";
-import { getAllProducts, getProducts, getTopProducts } from "../data/products";
+import { deleteProduct, getAllProducts, getProducts, getTopProducts } from "../data/products";
 import { storePurchase, getRecentPurchases } from "../data/purchases";
 import { useLocation } from "react-router-dom";
 import { axiosInstance } from "../config/axios";
@@ -15,6 +15,10 @@ export const AppProvider = ({ children }) => {
     const [alerts, setAlerts] = useState([]);
     const [toggleModal, setToggleModal] = useState(false);
     const [toggleProductsModal, setToggleProductsModal] = useState(false);  // * Estado para mostrar/ocultar el modal de productos
+    const [deleteProductModal, setDeleteProductModal] = useState(false);    // * Estado para mostrar/ocultar el modal de eliminar producto
+    const [toggleModalProduct, setToggleModalProduct] = useState(false);    // * Estado para mostrar/ocultar el modal de productos
+    const [deleteProductID, setDeleteProductID] = useState(null);           // * Estado para almacenar el ID del producto a eliminar
+    const [updateProductID, setUpdateProductID] = useState(null);           // * Estado para almacenar el ID del producto a actualizar
     const [products, setProducts] = useState([]);                           // * Estado para almacenar los productos
     const [productsAll, setAllProducts] = useState([]);                     // * Estado para almacenar los todos los productos
     const [topProducts, setTopProducts] = useState([]);                     // * Estado para almacenar los productos más vendidos
@@ -31,6 +35,14 @@ export const AppProvider = ({ children }) => {
     useEffect(() => {
         getUserAdmin(); // ? Validamos si el usuario es administrador
     }, []);
+
+    // ? Reseteamos el estado de los ID's
+    useEffect(() => {
+        if ( ! toggleModalProduct ){
+            setDeleteProductID (null); 
+            setUpdateProductID (null); 
+        }
+    }, [toggleModalProduct]);
 
     useEffect(() => {
         if(Object.keys(user).length > 0){
@@ -125,6 +137,18 @@ export const AppProvider = ({ children }) => {
         setCart( newCart );
     };
 
+    // ? Creamos función para eliminar un producto del administrador
+    const handleDeleteProductAdmin = async () => {
+        await deleteProduct( deleteProductID ).then( data => {
+            // ? Mostramos notificación
+            handleNotification('Producto eliminado', data, 'success', 10000);
+            handleGetAllProducts();
+            setDeleteProductModal(false);
+        }).catch( error => {
+            console.log(error);
+        });
+    };
+
     // ? Creamos función para crear la compra del usuario
     const handleCreatePurchase = ( status, cart ) => {
         // ? Creamos un arreglo de los productos, dejando solo el id y la cantidad
@@ -191,15 +215,19 @@ export const AppProvider = ({ children }) => {
             alerts, setAlerts,
             toggleModal, setToggleModal,
             toggleProductsModal, setToggleProductsModal,
+            deleteProductModal, setDeleteProductModal,
             cart, setCart,
             products, setProducts, topProducts,
             productsAll, setAllProducts,
             recentPurchases, 
             recentProducts, setRecentProducts,
             userAdmin, setUserAdmin,
+            toggleModalProduct, setToggleModalProduct,
             availableOptionProduct, setAvailableOptionProduct,
+            deleteProductID, setDeleteProductID,
+            updateProductID, setUpdateProductID,
             handleNotification, handleProductAmount, handleDeleteProduct, handleCreatePurchase, handleAddToCart,
-            handleGetAllProducts,
+            handleGetAllProducts, handleDeleteProductAdmin, 
             }}>
             { children }
         </AppContext.Provider>

@@ -1,13 +1,14 @@
 
-import { Fragment, useRef, useState } from 'react'
+import { Fragment, useEffect, useRef, useState } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
-import { ArrowRightCircleIcon, CurrencyDollarIcon, ExclamationTriangleIcon, InformationCircleIcon, QuestionMarkCircleIcon } from '@heroicons/react/24/outline'
+import { ArrowRightCircleIcon, CurrencyDollarIcon, InformationCircleIcon } from '@heroicons/react/24/outline'
 import { BookmarkIcon, PhotoIcon, XCircleIcon } from '@heroicons/react/20/solid'
 import { ProductOptionAvailable } from './ProductOptionAvailable'
 import { ButtonApp } from './utility/ButtonApp'
 import { useApp } from '../hooks/useApp'
-import { saveProduct } from '../data/products'
+import { getProductById, saveProduct, updateProduct } from '../data/products'
 import { FormError } from './FormError'
+import { mailingLists } from '../data'
 
 export const ProductModal = ({open, setOpen}) => {
 
@@ -24,9 +25,28 @@ export const ProductModal = ({open, setOpen}) => {
     const [imageError, setImageError] = useState(null);
 
     const [imageName, setImageName] = useState('');             // Estado para el nombre de la imagen
+    const [imagePreview, setImagePreview] = useState(null);     // Estado para la vista previa de la imagen
     const [loadingButton, setLoadingButton] = useState(false);  // Estado para el botón de guardar producto
     
-    const { availableOptionProduct, handleNotification, handleGetAllProducts } = useApp();
+    const { availableOptionProduct, setAvailableOptionProduct, handleNotification, handleGetAllProducts, updateProductID } = useApp();
+
+    useEffect(() => {
+        if ( updateProductID ) {
+            getProductById(updateProductID).then( response => {
+                // console.log(response);
+
+                // ? Asignamos los valores a los campos del formulario
+                name.current.value           = response[0].name;
+                description.current.value    = response[0].description;
+                price.current.value          = response[0].price;
+                setAvailableOptionProduct(mailingLists[ response[0].available === 1 ? 0 : 1 ]);
+                setImagePreview(response[0].image);
+            }).catch( () => {
+                console.log('Operación cancelada [Editar producto]');
+            });
+        }
+    }, [updateProductID])
+    
     
     // ? Función para guardar el producto
     const handleSubmit = async (e) => {
@@ -44,17 +64,28 @@ export const ProductModal = ({open, setOpen}) => {
         if ( image.current.files[0] ) {
             formData.append('image', image.current.files[0]);
         }
+        
+        if ( updateProductID ) {
+            formData.append('_method', 'PATCH');
 
-        // ? Guardamos el producto en la API
-        await saveProduct( formData ).then( response => {
-            handleNotification('Producto creado', response, 'success', 10000);      // Mostramos notificación
-            setOpen(false);                                                         // Cerramos el modal
-            setImageName('');                                                       // Limpiamos el nombre de la imagen
-            handleErrors({});                                                       // Limpiamos los errores
-            handleGetAllProducts();                                                 // Actualizamos la lista de productos
-        }).catch( error => {
-            handleErrors(error.response.data.errors);
-        });
+            // ? Actualizamos el producto en la API
+            await updateProduct( formData, updateProductID ).then( response => {
+                handleNotification('Producto actualizado', response, 'success', 10000);     // Mostramos notificación
+                handleClose();                                                              // Cerramos el modal
+                handleGetAllProducts();                                                     // Actualizamos la lista de productos
+            }).catch( error => {
+                handleErrors(error.response.data.errors);
+            });
+        }else{
+            // ? Guardamos el producto en la API
+            await saveProduct( formData ).then( response => {
+                handleNotification('Producto creado', response, 'success', 10000);      // Mostramos notificación
+                handleClose();                                                          // Cerramos el modal
+                handleGetAllProducts();                                                 // Actualizamos la lista de productos
+            }).catch( error => {
+                handleErrors(error.response.data.errors);
+            });
+        }
 
         setLoadingButton(false);   // Desactivamos el botón de guardar producto
     };
@@ -80,10 +111,12 @@ export const ProductModal = ({open, setOpen}) => {
         setImageError( errors.image ? errors.image[0] : null );
     };
 
+    // ? Función para cerrar el modal
     const handleClose = () => {
-        setOpen(false);
-        setImageName('');
-        handleErrors({});
+        setOpen(false);     // Cerramos el modal
+        setImageName('');   // Limpiamos el nombre de la imagen
+        handleErrors({});   // Limpiamos los errores
+        setImagePreview(null);  // Limpiamos la vista previa de la imagen
     };
 
     return (
@@ -128,10 +161,10 @@ export const ProductModal = ({open, setOpen}) => {
                         </button>
                     </div>
                     <form onSubmit={(e) => handleSubmit(e)} className="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl md:col-span-2 pt-4">
-                        <div className="px-4 py-6 sm:p-8">
-                            <div className="grid max-w-2xl grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+                        <div className="px-8 py-6">
+                            <div className="grid max-w-2xl grid-cols-4 gap-x-6 gap-y-8 sm:grid-cols-6">
                                 {/* // TODO | Nombre */}
-                                <div className="sm:col-span-4">
+                                <div className="col-span-full sm:col-span-4">
                                     <label htmlFor="product" className="flex items-center gap-1 text-sm font-medium leading-6 text-gray-900">
                                         <ArrowRightCircleIcon className="h-4 w-4 text-primary-600" aria-hidden="true" />
                                         Nombre del producto
@@ -151,7 +184,7 @@ export const ProductModal = ({open, setOpen}) => {
                                     <FormError error={ nameError } />
                                 </div>
                                 {/* // TODO | Costo */}
-                                <div className="sm:col-span-2">
+                                <div className="col-span-full sm:col-span-2">
                                     <label htmlFor="price" className="flex items-center gap-1 text-sm font-medium leading-6 text-gray-900">
                                         <CurrencyDollarIcon className="h-4 w-4 text-primary-600" aria-hidden="true" />
                                         Costo
@@ -199,6 +232,16 @@ export const ProductModal = ({open, setOpen}) => {
                                         <PhotoIcon className="h-4 w-4 text-primary-500" aria-hidden="true" />
                                         Imagen del producto
                                     </p>
+                                    { imagePreview && (
+                                            <div className="overflow-hidden my-4">
+                                                <img
+                                                    src={imagePreview}
+                                                    alt={`Imagen de ${imagePreview}`}
+                                                    className="w-40 h-40 sm:w-36 sm:h-36 object-cover object-center select-none"
+                                                />
+                                            </div>
+                                        )
+                                    }
                                     <div className="mt-2 flex items-center gap-x-3">
                                         <label
                                             htmlFor="file-upload"

@@ -1,5 +1,6 @@
 import { SquaresPlusIcon } from "@heroicons/react/24/outline";
 import { useEffect, useState } from "react";
+import { AlertModal } from "../../components/AlertModal";
 import { ProductModal } from "../../components/ProductModal";
 import { ProductView } from "../../components/ProductView";
 import { ButtonApp } from "../../components/utility/ButtonApp";
@@ -7,9 +8,10 @@ import { useApp } from "../../hooks/useApp";
 
 export const ProductsView = () => {
 
-    const [toggleModalProduct, setToggleModalProduct] = useState(false); // ? Estado para mostrar/ocultar el modal de productos
-
-    const { productsAll, handleGetAllProducts } = useApp(); // ? Obtenemos los productos del Provider
+    const { 
+        productsAll, handleGetAllProducts, deleteProductModal, setDeleteProductModal, 
+        handleDeleteProductAdmin, toggleModalProduct, setToggleModalProduct
+     } = useApp(); // ? Obtenemos los productos del Provider
 
     useEffect(() => {
         handleGetAllProducts();
@@ -73,6 +75,15 @@ export const ProductsView = () => {
                 </div>
             </div>
             <ProductModal open={toggleModalProduct} setOpen={setToggleModalProduct} />
+            <AlertModal
+                title="¿Eliminar producto?"
+                message="¿Estás seguro de eliminar este producto? Esta acción no se puede deshacer."
+                actionButtonText="Eliminar producto"
+                toggleModal={ deleteProductModal }
+                setToggleModal={ setDeleteProductModal }
+                actionButton={ handleDeleteProductAdmin }
+                type="warning"
+            />
       </div>
     )
 }
